@@ -13,6 +13,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
+import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
+
 
 
 import{
@@ -100,7 +102,7 @@ const Schedule = () => {
 
                     <Formik
                         initialValues = {{fullName: '', name: '', phoneNumber: '', Day: '', note: ''}} // Added phoneNumber to initialValues
-                        onSubmit={(values) => {
+                        onSubmit={async (values) => {
                             if (!values.fullName || values.fullName.length < 2 || values.fullName.length > 100) {
                                 Alert.alert('Error', 'Full Name must be between 2 and 100 characters');
                             } else if (!values.name || !['Abhishekam', 'Beeksha'].includes(values.name)) {
@@ -111,6 +113,7 @@ const Schedule = () => {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
                             } else {
                                 console.log(values);
+                                await addDataToFirestore(values);
                             }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>

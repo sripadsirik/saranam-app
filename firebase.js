@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 //import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,4 +21,15 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 //const analytics = getAnalytics(app);
 
-export { auth };
+const db = getFirestore();
+
+async function addDataToFirestore(data) {
+  try {
+    const docRef = await addDoc(collection(db, "something-in-the-evening"), data);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export { auth, addDataToFirestore };
