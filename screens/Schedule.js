@@ -101,7 +101,17 @@ const Schedule = () => {
                     <Formik
                         initialValues = {{fullName: '', name: '', phoneNumber: '', Day: '', note: ''}} // Added phoneNumber to initialValues
                         onSubmit={(values) => {
-                            console.log(values);
+                            if (!values.fullName || values.fullName.length < 2 || values.fullName.length > 100) {
+                                Alert.alert('Error', 'Full Name must be between 2 and 100 characters');
+                            } else if (!values.name || !['Abhishekam', 'Beeksha'].includes(values.name)) {
+                                Alert.alert('Error', 'Invalid selection for type of pooja Abhishekam/Beeksha');
+                            } else if (!values.phoneNumber || !/^[0-9]{10}$/.test(values.phoneNumber)) {
+                                Alert.alert('Error', 'Phone Number must be exactly 10 digits');
+                            } else if (!values.Day) {
+                                Alert.alert('Error', 'Day is required, other than the current day or past day');
+                            } else {
+                                console.log(values);
+                            }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
                         
