@@ -37,9 +37,9 @@ async function addDataToFirestore(data) {
 
     // Create a query against the collection
     const q = query(collection(db, "something-in-the-evening"), 
-      where("fullName", "==", newData.fullName),
-      where("name", "==", newData.name),
-      where("note", "==", newData.note),
+      // where("fullName", "==", newData.fullName),
+      // where("name", "==", newData.name),
+      // where("note", "==", newData.note),
       where("Day", "==", newData.Day),
       where("phoneNumber", "==", newData.phoneNumber)
     );
