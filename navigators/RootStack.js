@@ -34,13 +34,13 @@ const BottomTabNavigator = () => {
             iconName = 'home-outline';
           } 
           else if (route.name === 'Schedule') {
-            iconName = 'add-circle-outline';
+            iconName = 'time-outline';
           } 
           else if (route.name === 'Calendar') {
             iconName = 'calendar-outline';
           }
           else if (route.name === 'Bookings') {
-            iconName = 'time-outline';
+            iconName = 'bonfire-outline';
           }
           else if (route.name === 'Scripts') {
             iconName = 'document-text-outline';
