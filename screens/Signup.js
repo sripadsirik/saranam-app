@@ -39,7 +39,6 @@ const Signup = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true); 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState('');
-    /* bruh*/
 
     const handleSignup = async () => {
         if (password.length < 8) {
@@ -87,15 +86,6 @@ const Signup = ({navigation}) => {
                         handleSignup();
                     }}
                 >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
-                    {/* <MyTextInput 
-                        label="Full Name"
-                        icon="person"
-                        placeholder="Ling Lee"
-                        placeholderTextColor={darkLight}
-                        onChangeText={handleChange('fullName')}
-                        onBlur={handleBlur('fullName')}
-                        value={values.fullName}
-                    /> */}
 
                     <MyTextInput 
                         label="Email Address"
@@ -107,14 +97,6 @@ const Signup = ({navigation}) => {
                         value={email}
                         keyboardType="email-address"
                     />
-
-                    {/* <MyTextInput 
-                        label="Phone Number (without +1)"
-                        icon="number-24"
-                        placeholder="1234567890"
-                        placeholderTextColor={darkLight}
-                        keyboardType="numeric"
-                    /> */}
 
                     <MyTextInput 
                         label="Password"
@@ -129,20 +111,6 @@ const Signup = ({navigation}) => {
                         hidePassword={hidePassword}
                         setHidePassword={setHidePassword}
                     />
-
-                    {/* <MyTextInput 
-                        label="Confirm Password"
-                        icon="lock"
-                        placeholder="*************"
-                        placeholderTextColor={darkLight}
-                        onChangeText={handleChange('confirmpassword')}
-                        onBlur={handleBlur('confirmpassword')}
-                        value={values.confirmpassword}
-                        secureTextEntry={hidePassword}
-                        isPassword={true}
-                        hidePassword={hidePassword}
-                        setHidePassword={setHidePassword}
-                    /> */}
 
                     <MsgBox>...</MsgBox>
                     <StyledButton onPress={handleSubmit}>
