@@ -5,6 +5,7 @@ import { getFirestore, collection, query, where, onSnapshot, doc, deleteDoc } fr
 import { getAuth } from "firebase/auth";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Alert } from 'react-native';
 
 import {
     InnerContainer,
@@ -55,9 +56,11 @@ const Booking = () => {
             console.log("Deleting document with ID: ", appointmentId);
             await deleteDoc(doc(db, 'appointments', appointmentId));
             console.log("Document successfully deleted!");
+            Alert.alert('NICE', 'Appointment deleted successfully!');
             // Here you might want to remove the deleted appointment from your local state as well
         } catch (error) {
             console.error("Error removing document: ", error);
+            Alert.alert('Error', 'Error deleting appointment!');
         }
     };
 
