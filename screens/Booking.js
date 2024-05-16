@@ -21,7 +21,7 @@ import{
 }from '../components/stylesw';
 import { MsgBox } from '../components/styles';
 
-const My_Bookings = () => {
+const Booking = () => {
 
     return(
         <KeyboardAvoidingWrapper>
@@ -41,4 +41,4 @@ const My_Bookings = () => {
 
 
 
-export default My_Bookings;
+export default Booking;
