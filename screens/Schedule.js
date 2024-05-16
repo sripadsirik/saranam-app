@@ -13,7 +13,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
-import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
+import firebase from 'firebase';
+//import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
 
 
 
@@ -43,8 +44,9 @@ const {brand, darkLight, primary} = Colors;
 
 const Schedule = () => {
     
-
-
+    // Get the current user
+    const user = firebase.auth().currentUser;
+    
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   
     const [name, setName] = useState(''); // Changed email to name and set default value to 'Pooja/Beeksha'
@@ -88,6 +90,21 @@ const Schedule = () => {
         hideDatePicker();
     };
 
+    // Save the appointment data
+    const appointmentData = {
+        fullName: values.fullName, // the full name
+        name: values.name, // the selected value from the Picker
+        phoneNumber: Number(values.phoneNumber), // the phone number
+        Day: new Date(values.Day), // the selected date
+        note: values.note, // the note
+        userId: user.uid, // the user's ID
+
+        // include other appointment data here
+    };
+
+    // Save the appointment data in Firestore
+    firebase.firestore().collection('appointments').add(appointmentData);
+
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -113,7 +130,7 @@ const Schedule = () => {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
                             } else {
                                 console.log(values);
-                                await addDataToFirestore(values);
+                                //await addDataToFirestore(values);
                             }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
