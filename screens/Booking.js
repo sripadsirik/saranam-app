@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, StatusBar } from 'react-native';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
-import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, query, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -34,7 +34,10 @@ const Booking = () => {
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const appointments = [];
                 querySnapshot.forEach((doc) => {
-                    appointments.push(doc.data());
+                    appointments.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
                 });
                 setAppointments(appointments);
             });
@@ -43,6 +46,20 @@ const Booking = () => {
             return () => unsubscribe();
         }
     }, [user]);
+
+    const handleDelete = async (index) => {
+        const db = getFirestore();
+        const appointmentId = appointments[index].id; // replace this with how you're storing the id
+    
+        try {
+            console.log("Deleting document with ID: ", appointmentId);
+            await deleteDoc(doc(db, 'appointments', appointmentId));
+            console.log("Document successfully deleted!");
+            // Here you might want to remove the deleted appointment from your local state as well
+        } catch (error) {
+            console.error("Error removing document: ", error);
+        }
+    };
 
     return(
         <KeyboardAvoidingWrapper>
@@ -82,10 +99,6 @@ const Booking = () => {
         /*test commment for github*/
 
     );
-};
-
-const handleDelete = (index) => {
-    // Add your delete logic here
 };
 
 const styles = StyleSheet.create({
