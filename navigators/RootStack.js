@@ -14,7 +14,7 @@ import Schedule from '../screens/Schedule';
 import Scripts from '../screens/Scripts';
 import About from '../screens/About';
 import Calendar from '../screens/Calendar';
-import Bookings from '../screens/My_Bookings';
+import Bookings from '../screens/Booking';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

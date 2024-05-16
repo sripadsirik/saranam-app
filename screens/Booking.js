@@ -18,7 +18,7 @@ import{
     WelcomeImage,
     Avatar,
     StyledContainer
-}from './../components/stylesw';
+}from '../components/stylesw';
 import { MsgBox } from '../components/styles';
 
 const My_Bookings = () => {
