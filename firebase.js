@@ -22,16 +22,17 @@ const app = initializeApp(firebaseConfig);
 
 let auth;
 
-if (!getAuth(app)) {
+async function initializeFirebaseAuth() {
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage)
   });
-} else {
-  auth = getAuth(app);
 }
+
+initializeFirebaseAuth();
+
 //const analytics = getAnalytics(app);
 
-const db = getFirestore();
+const db = getFirestore(app);
 
 async function addDataToFirestore(data) {
   try {

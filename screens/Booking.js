@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import {ScrollView} from "react-native";
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
+import { useEffect, useState } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase.js';
 
-import{
-
+import {
     InnerContainer,
     PageLogo,
     PageTitle,
@@ -18,10 +19,20 @@ import{
     WelcomeImage,
     Avatar,
     StyledContainer
-}from '../components/stylesw';
-import { MsgBox } from '../components/styles';
+} from '../components/stylesw';
+import { MsgBox, ItemBox } from '../components/styles';
 
 const Booking = () => {
+    const [bookingData, setBookingData] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, "something-in-the-evening", "OuIz7ChxpA4fTomwlcNu"), (doc) => {
+            setBookingData(doc.data());
+        });
+
+        // Clean up the subscription on unmount
+        return () => unsubscribe();
+    }, []);
 
     return(
         <KeyboardAvoidingWrapper>
@@ -32,13 +43,19 @@ const Booking = () => {
                     <Line />
                     <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing booking below. </MsgBox>
                     <Line />
+                    {bookingData && (
+                        <ItemBox>
+                            <Text>Full Name: {bookingData.fullName}</Text>
+                            <Text>Type of Event: {bookingData.name}</Text>
+                            <Text>Phone Number: {bookingData.phoneNumber}</Text>
+                            <Text>Date: {bookingData.Day}</Text>
+                            <Text>Additional Notes: {bookingData.note}</Text>
+                        </ItemBox>
+                    )}
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
-                
     );
 };
-
-
 
 export default Booking;
