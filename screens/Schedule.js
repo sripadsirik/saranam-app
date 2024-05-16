@@ -164,6 +164,7 @@ const Schedule = () => {
                                 if (!dateSnapshot.empty) {
                                     // If the date or phone number is already used, show an error message
                                     console.error("An appointment with this date or phone number already exists.");
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing appointment first in Bookings');
                                     Alert.alert('Error', 'An appointment with this date already exists.');
                                     return;
                                 }
@@ -189,19 +190,6 @@ const Schedule = () => {
                                 );
                                 const userAppointmentSnapshot = await getDocs(userAppointmentQuery);
 
-                                // Check if the phone number or date is already used
-                                // const dateOrPhoneQuery = query(
-                                //     collection(db, "appointments"),
-                                //     where("Day", "==", utcDate),
-                                //     where("phoneNumber", "==", appointmentData.phoneNumber)
-                                // );
-                                // const dateOrPhoneSnapshot = await getDocs(dateOrPhoneQuery);
-
-                                // if (!dateOrPhoneSnapshot.empty) {
-                                //     // If the date or phone number is already used, show an error message
-                                //     console.error("An appointment with this date or phone number already exists.");
-                                //     Alert.alert('Error', 'An appointment with this date or phone number already exists.');
-                                //     return;
                                 if (!userAppointmentSnapshot.empty) {
                                     // If the user has already scheduled an appointment, delete it
                                     const docId = userAppointmentSnapshot.docs[0].id;
@@ -233,9 +221,6 @@ const Schedule = () => {
                                 onCancel={hideDatePicker}
                             />
                         )}
-                        {/* <Text>
-                            Selected Date: {date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
-                        </Text> */}
                     
                         <MyTextInput 
                             label="Full Name"
@@ -246,18 +231,6 @@ const Schedule = () => {
                             onBlur={handleBlur('fullName')}
                             value={values.fullName}
                         />
-                        {/* <MyTextInput 
-                            label="A = Abhishekam or B = Beeksha"
-                            icon="home"
-                            placeholder="A/B"
-                            placeholderTextColor={darkLight}
-                            onChangeText={(text) => {
-                                setName(text);
-                                handleChange('name')(text);
-                            }}
-                            onBlur={handleBlur('name')}
-                            value={name}
-                        /> */}
                         
                         <MyTextInput 
                             label="A = Abhishekam or B = Beeksha"
@@ -320,44 +293,6 @@ const Schedule = () => {
                             value={phoneNumber}
                         /> 
 
-                        {/* <MyTextInput 
-                            label="When would you like to schedule?"
-                            icon="calendar"
-                            placeholder="YYYY - MM - DD"
-                            placeholderTextColor={darkLight}
-                            onChangeText={(text) => {
-                                console.log('Text entered:', text);
-                                const date = new Date(text);
-                                setDob(date);
-                                const formattedDate = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
-                                handleChange('Day')(formattedDate);
-                                console.log('Day:', formattedDate);
-                            }}
-                            value={dob ? `${dob.getFullYear()}-${('0' + (dob.getMonth() + 1)).slice(-2)}-${('0' + dob.getDate()).slice(-2)}` : ''}
-                            onBlur={handleBlur('Day')}
-                            isDate={true}
-                            editable={false}
-                            showDatePicker={showDatePicker}
-                        /> */}
-
-                        {/* <Button title="When would you like to schedule?" onPress={showDatePicker} />
-                        <DateTimePickerModal
-                            isVisible={isDatePickerVisible}
-                            mode="date"
-                            onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
-                            onCancel={hideDatePicker}
-                        />
-
-
-                        <MyTextInput 
-                            label="Selected Date"
-                            icon="calendar"
-                            placeholder="YYYY-MM-DD"
-                            placeholderTextColor={darkLight}
-                            value={date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
-                            editable={false}
-                        /> */}
-
                         <DateTimePickerModal
                             isVisible={isDatePickerVisible}
                             mode="date"
@@ -386,7 +321,6 @@ const Schedule = () => {
                             value={values.note}
                         />
 
-                        {/* <MsgBox>...</MsgBox> */}
                         <StyledButton onPress={handleSubmit}>
                             <ButtonText>
                                 Schedule
@@ -417,5 +351,3 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, i
 };
 
 export default Schedule;
-
-//test comment for github
