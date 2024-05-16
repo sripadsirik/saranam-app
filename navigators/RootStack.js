@@ -14,6 +14,7 @@ import Schedule from '../screens/Schedule';
 import Scripts from '../screens/Scripts';
 import About from '../screens/About';
 import Calendar from '../screens/Calendar';
+import Bookings from '../screens/My_Bookings';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,10 +32,21 @@ const BottomTabNavigator = () => {
 
           if (route.name === 'Welcome') {
             iconName = 'home-outline';
-          } else if (route.name === 'Schedule') {
+          } 
+          else if (route.name === 'Schedule') {
+            iconName = 'add-circle-outline';
+          } 
+          else if (route.name === 'Calendar') {
             iconName = 'calendar-outline';
-          } else if (route.name === 'Calendar') {
-            iconName = 'calendar-outline';
+          }
+          else if (route.name === 'Bookings') {
+            iconName = 'time-outline';
+          }
+          else if (route.name === 'Scripts') {
+            iconName = 'document-text-outline';
+          }
+          else if (route.name === 'About Us') {
+            iconName = 'information-circle-outline';
           }
 
           return <TabIcon focused={focused} name={iconName} />;
@@ -50,7 +62,8 @@ const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen options={{headerShown: false}} name="Welcome" component={Welcome} />
-      <Tab.Screen options={{headerShown: false}}  name="Schedule" component={Schedule} />
+      <Tab.Screen options={{headerShown: false}} name="Schedule" component={Schedule} />
+      <Tab.Screen /*options={{headerShown: false}}*/ name="Bookings" component={Bookings} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="Calendar" component={Calendar} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="Scripts" component={Scripts} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="About Us" component={About} />

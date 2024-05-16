@@ -178,7 +178,7 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, i
           <StyledTextInput {...props} pointerEvents={isDate ? 'none' : 'auto'} onChangeText={props.onChangeText} />
           {isPassword && (
             <RightIcon onPress={() => setHidePassword(!hidePassword)}>
-              <Ionicons name={hidePassword ? 'md-eye-off' : 'md-eye'} size={30} color={darkLight} />
+              <Ionicons name={hidePassword ? 'eye' : 'eye-off'} size={30} color={darkLight} />
             </RightIcon>
           )}
         </View>
