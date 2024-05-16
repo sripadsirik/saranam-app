@@ -36,25 +36,25 @@ async function addDataToFirestore(data) {
     console.log(newData);
 
     // Create a query against the collection
-    const q = query(collection(db, "something-in-the-evening"), 
-      // where("fullName", "==", newData.fullName),
-      // where("name", "==", newData.name),
-      // where("note", "==", newData.note),
-      where("Day", "==", newData.Day),
-      where("phoneNumber", "==", newData.phoneNumber)
-    );
+    // const q = query(collection(db, "something-in-the-evening"), 
+    //   // where("fullName", "==", newData.fullName),
+    //   // where("name", "==", newData.name),
+    //   // where("note", "==", newData.note),
+    //   where("Day", "==", newData.Day),
+    //   where("phoneNumber", "==", newData.phoneNumber)
+    // );
 
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      // Document with same fields already exists
-      Alert.alert("Duplicate Entry", "A document with the same fields already exists.");
+    // const querySnapshot = await getDocs(q);
+    // if (!querySnapshot.empty) {
+    //   // Document with same fields already exists
+    //   Alert.alert("Duplicate Entry", "A document with the same fields already exists.");
 
-      // Log the duplicate fields
-      querySnapshot.forEach((doc) => {
-        console.log("Duplicate document data:", doc.data());
-      });
-      return;
-    }
+    //   // Log the duplicate fields
+    //   querySnapshot.forEach((doc) => {
+    //     console.log("Duplicate document data:", doc.data());
+    //   });
+    //   return;
+    // }
 
     const docRef = await addDoc(collection(db, "something-in-the-evening"), newData);
     console.log("Document written with ID: ", docRef.id);
