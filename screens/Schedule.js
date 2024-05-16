@@ -218,6 +218,7 @@ const Schedule = () => {
                                 }
 
                                 Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your appointment.');
+                                console.log(values);
                             }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
