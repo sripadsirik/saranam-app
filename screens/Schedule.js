@@ -90,8 +90,8 @@ const Schedule = () => {
 
     return(
         <KeyboardAvoidingWrapper>
-        <StyledContainer>
-            <StatusBar style="dark" />
+            <StyledContainer>
+                <StatusBar style="dark" />
                 <InnerContainer>
                     <PageTitle> Schedule </PageTitle>
                     <MsgBox> </MsgBox>
@@ -291,7 +291,7 @@ const Schedule = () => {
                     </StyledFormArea>)}
                     </Formik>
                 </InnerContainer>
-        </StyledContainer>
+            </StyledContainer>
         </KeyboardAvoidingWrapper>
     );
 };
