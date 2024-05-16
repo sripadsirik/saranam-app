@@ -26,7 +26,7 @@ const Booking = () => {
     const [bookingData, setBookingData] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, "something-in-the-evening", "OuIz7ChxpA4fTomwlcNu"), (doc) => {
+        const unsubscribe = onSnapshot(doc(db, "app", "IO123mmEtVuuPT2pvNrm"), (doc) => {
             setBookingData(doc.data());
         });
 

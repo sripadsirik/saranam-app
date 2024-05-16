@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {Formik} from 'formik';
-import {TouchableOpacity} from 'react-native';
-import {Octicons, Ionicons, Fontisto} from '@expo/vector-icons';
+import { Formik } from 'formik';
+import { TouchableOpacity } from 'react-native';
+import { Octicons, Ionicons, Fontisto } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 import { ScrollView } from 'react-native';
-import {auth, analytics} from '../firebase';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, analytics } from '../firebase.js';
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
-import firebase from 'firebase';
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 //import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
 
 
@@ -44,8 +44,9 @@ const {brand, darkLight, primary} = Colors;
 
 const Schedule = () => {
     
-    // Get the current user
-    const user = firebase.auth().currentUser;
+    const db = getFirestore();
+    const auth = getAuth();
+    const user = auth.currentUser;
     
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   
@@ -90,20 +91,26 @@ const Schedule = () => {
         hideDatePicker();
     };
 
-    // Save the appointment data
-    const appointmentData = {
-        fullName: values.fullName, // the full name
-        name: values.name, // the selected value from the Picker
-        phoneNumber: Number(values.phoneNumber), // the phone number
-        Day: new Date(values.Day), // the selected date
-        note: values.note, // the note
-        userId: user.uid, // the user's ID
-
-        // include other appointment data here
-    };
-
-    // Save the appointment data in Firestore
-    firebase.firestore().collection('appointments').add(appointmentData);
+    // const saveAppointment = async () => {
+    //     // Save the appointment data
+    //     const appointmentData = {
+    //         fullName: values.fullName, // the full name
+    //         name: values.name, // the selected value from the Picker
+    //         phoneNumber: Number(values.phoneNumber), // the phone number
+    //         Day: new Date(values.Day), // the selected date
+    //         note: values.note, // the note
+    //         userId: user.uid, // the user's ID
+    //     };
+    
+    //     // Save the appointment data in Firestore
+    //     try {
+    //         const docRef = await addDoc(collection(db, "appointments"), appointmentData);
+    //         console.log("Document written with ID: ", docRef.id);
+    //     } catch (e) {
+    //         console.error("Error adding document: ", e);
+    //     }
+    // }
+    
 
     return(
         <KeyboardAvoidingWrapper>
@@ -130,7 +137,30 @@ const Schedule = () => {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
                             } else {
                                 console.log(values);
-                                //await addDataToFirestore(values);
+                                
+                                const dateParts = values.Day.split("-");
+
+                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+
+                                const appointmentData = {
+                                    fullName: values.fullName, // the full name
+                                    name: values.name, // the selected value from the Picker
+                                    phoneNumber: Number(values.phoneNumber), // the phone number
+                                    Day: utcDate, // the selected date
+                                    day: values.Day,
+                                    note: values.note, // the note
+                                    userId: user.uid, // the user's ID
+                                };
+                            
+                                // Save the appointment data in Firestore
+                                try {
+                                    const docRef = await addDoc(collection(db, "appointments"), appointmentData);
+                                    console.log("Document written with ID: ", docRef.id);
+                                } catch (e) {
+                                    console.error("Error adding document: ", e);
+                                }
+
+                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your appointment.');
                             }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
