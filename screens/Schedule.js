@@ -14,7 +14,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
 import { getFirestore, collection, where, getDocs, deleteDoc, addDoc, query, doc } from "firebase/firestore";
-//import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
 
 
 
@@ -91,27 +90,6 @@ const Schedule = () => {
         hideDatePicker();
     };
 
-    // const saveAppointment = async () => {
-    //     // Save the appointment data
-    //     const appointmentData = {
-    //         fullName: values.fullName, // the full name
-    //         name: values.name, // the selected value from the Picker
-    //         phoneNumber: Number(values.phoneNumber), // the phone number
-    //         Day: new Date(values.Day), // the selected date
-    //         note: values.note, // the note
-    //         userId: user.uid, // the user's ID
-    //     };
-    
-    //     // Save the appointment data in Firestore
-    //     try {
-    //         const docRef = await addDoc(collection(db, "appointments"), appointmentData);
-    //         console.log("Document written with ID: ", docRef.id);
-    //     } catch (e) {
-    //         console.error("Error adding document: ", e);
-    //     }
-    // }
-    
-
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -164,8 +142,8 @@ const Schedule = () => {
                                 if (!dateSnapshot.empty) {
                                     // If the date or phone number is already used, show an error message
                                     console.error("An appointment with this date or phone number already exists.");
-                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing appointment first in Bookings');
-                                    Alert.alert('Error', 'An appointment with this date already exists.');
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
+                                    Alert.alert('Error', 'An arrangement with this date already exists.');
                                     return;
                                 }
 
@@ -177,9 +155,9 @@ const Schedule = () => {
                                 const phoneSnapshot = await getDocs(phoneQuery);
                                 if (!phoneSnapshot.empty) {
                                     // If the phone number is already used, show an error message
-                                    console.error("An appointment with this phone number already exists.");
-                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing appointment first in Bookings');
-                                    Alert.alert('Error', 'An appointment with this phone number already exists.');
+                                    console.error("An arrangement with this phone number already exists.");
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
+                                    Alert.alert('Error', 'An arrangement with this phone number already exists.');
                                     return;
                                 }
 
@@ -194,7 +172,7 @@ const Schedule = () => {
                                     // If the user has already scheduled an appointment, delete it
                                     const docId = userAppointmentSnapshot.docs[0].id;
                                     await deleteDoc(doc(db, 'appointments', docId));
-                                    Alert.alert('NICE', 'Your previous appointment has been deleted.');
+                                    Alert.alert('NICE', 'Your previous arrangement has been deleted.');
                                 }
 
                                 // Save the appointment data in Firestore
@@ -205,7 +183,7 @@ const Schedule = () => {
                                     console.error("Error adding document: ", e);
                                 }
 
-                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your appointment.');
+                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your arrangement.');
                                 console.log(values);
                             }
                         }}

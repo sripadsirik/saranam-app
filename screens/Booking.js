@@ -56,11 +56,11 @@ const Booking = () => {
             console.log("Deleting document with ID: ", appointmentId);
             await deleteDoc(doc(db, 'appointments', appointmentId));
             console.log("Document successfully deleted!");
-            Alert.alert('NICE', 'Appointment deleted successfully!');
+            Alert.alert('NICE', 'Arrangement deleted successfully!');
             // Here you might want to remove the deleted appointment from your local state as well
         } catch (error) {
             console.error("Error removing document: ", error);
-            Alert.alert('Error', 'Error deleting appointment!');
+            Alert.alert('Error', 'Error deleting arrangement!');
         }
     };
 
@@ -71,7 +71,7 @@ const Booking = () => {
                 <InnerContainer>
                     <PageTitle> My Pooja Time </PageTitle>
                     <Line />
-                    <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing booking below. </MsgBox>
+                    <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing Arrangement below. </MsgBox>
                     <Line />
                     <View style={styles.container}>
                         {appointments.map((appointment, index) => (
