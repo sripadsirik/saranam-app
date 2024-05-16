@@ -13,8 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-//import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
+import { getFirestore, collection, where, getDocs, deleteDoc, addDoc, query, doc } from "firebase/firestore";
 
 
 
@@ -91,27 +90,6 @@ const Schedule = () => {
         hideDatePicker();
     };
 
-    // const saveAppointment = async () => {
-    //     // Save the appointment data
-    //     const appointmentData = {
-    //         fullName: values.fullName, // the full name
-    //         name: values.name, // the selected value from the Picker
-    //         phoneNumber: Number(values.phoneNumber), // the phone number
-    //         Day: new Date(values.Day), // the selected date
-    //         note: values.note, // the note
-    //         userId: user.uid, // the user's ID
-    //     };
-    
-    //     // Save the appointment data in Firestore
-    //     try {
-    //         const docRef = await addDoc(collection(db, "appointments"), appointmentData);
-    //         console.log("Document written with ID: ", docRef.id);
-    //     } catch (e) {
-    //         console.error("Error adding document: ", e);
-    //     }
-    // }
-    
-
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -141,7 +119,6 @@ const Schedule = () => {
                                 console.log(values);
 
                                 const dateParts = values.Day.split("-");
-
                                 const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));                             
 
                                 const appointmentData = {
@@ -153,7 +130,51 @@ const Schedule = () => {
                                     note: values.note, // the note
                                     userId: user.uid, // the user's ID
                                 };
-                            
+
+                                
+
+                                // Check if the date or phone number is already used
+                                const dateQuery = query(
+                                    collection(db, "appointments"),
+                                    where("Day", "==", utcDate),
+                                );
+                                const dateSnapshot = await getDocs(dateQuery);
+                                if (!dateSnapshot.empty) {
+                                    // If the date or phone number is already used, show an error message
+                                    console.error("An appointment with this date or phone number already exists.");
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
+                                    Alert.alert('Error', 'An arrangement with this date already exists.');
+                                    return;
+                                }
+
+                                // Check if the phone number is already used
+                                const phoneQuery = query(
+                                    collection(db, "appointments"),
+                                    where("phoneNumber", "==", appointmentData.phoneNumber)
+                                );
+                                const phoneSnapshot = await getDocs(phoneQuery);
+                                if (!phoneSnapshot.empty) {
+                                    // If the phone number is already used, show an error message
+                                    console.error("An arrangement with this phone number already exists.");
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
+                                    Alert.alert('Error', 'An arrangement with this phone number already exists.');
+                                    return;
+                                }
+
+                                // Check if the current user has already scheduled an appointment
+                                const userAppointmentQuery = query(
+                                    collection(db, "appointments"),
+                                    where("userId", "==", user.uid)
+                                );
+                                const userAppointmentSnapshot = await getDocs(userAppointmentQuery);
+
+                                if (!userAppointmentSnapshot.empty) {
+                                    // If the user has already scheduled an appointment, delete it
+                                    const docId = userAppointmentSnapshot.docs[0].id;
+                                    await deleteDoc(doc(db, 'appointments', docId));
+                                    Alert.alert('NICE', 'Your previous arrangement has been deleted.');
+                                }
+
                                 // Save the appointment data in Firestore
                                 try {
                                     const docRef = await addDoc(collection(db, "appointments"), appointmentData);
@@ -162,7 +183,8 @@ const Schedule = () => {
                                     console.error("Error adding document: ", e);
                                 }
 
-                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your appointment.');
+                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your arrangement.');
+                                console.log(values);
                             }
                         }}
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
@@ -177,9 +199,6 @@ const Schedule = () => {
                                 onCancel={hideDatePicker}
                             />
                         )}
-                        {/* <Text>
-                            Selected Date: {date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
-                        </Text> */}
                     
                         <MyTextInput 
                             label="Full Name"
@@ -190,18 +209,6 @@ const Schedule = () => {
                             onBlur={handleBlur('fullName')}
                             value={values.fullName}
                         />
-                        {/* <MyTextInput 
-                            label="A = Abhishekam or B = Beeksha"
-                            icon="home"
-                            placeholder="A/B"
-                            placeholderTextColor={darkLight}
-                            onChangeText={(text) => {
-                                setName(text);
-                                handleChange('name')(text);
-                            }}
-                            onBlur={handleBlur('name')}
-                            value={name}
-                        /> */}
                         
                         <MyTextInput 
                             label="A = Abhishekam or B = Beeksha"
@@ -264,44 +271,6 @@ const Schedule = () => {
                             value={phoneNumber}
                         /> 
 
-                        {/* <MyTextInput 
-                            label="When would you like to schedule?"
-                            icon="calendar"
-                            placeholder="YYYY - MM - DD"
-                            placeholderTextColor={darkLight}
-                            onChangeText={(text) => {
-                                console.log('Text entered:', text);
-                                const date = new Date(text);
-                                setDob(date);
-                                const formattedDate = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
-                                handleChange('Day')(formattedDate);
-                                console.log('Day:', formattedDate);
-                            }}
-                            value={dob ? `${dob.getFullYear()}-${('0' + (dob.getMonth() + 1)).slice(-2)}-${('0' + dob.getDate()).slice(-2)}` : ''}
-                            onBlur={handleBlur('Day')}
-                            isDate={true}
-                            editable={false}
-                            showDatePicker={showDatePicker}
-                        /> */}
-
-                        {/* <Button title="When would you like to schedule?" onPress={showDatePicker} />
-                        <DateTimePickerModal
-                            isVisible={isDatePickerVisible}
-                            mode="date"
-                            onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
-                            onCancel={hideDatePicker}
-                        />
-
-
-                        <MyTextInput 
-                            label="Selected Date"
-                            icon="calendar"
-                            placeholder="YYYY-MM-DD"
-                            placeholderTextColor={darkLight}
-                            value={date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
-                            editable={false}
-                        /> */}
-
                         <DateTimePickerModal
                             isVisible={isDatePickerVisible}
                             mode="date"
@@ -330,7 +299,6 @@ const Schedule = () => {
                             value={values.note}
                         />
 
-                        {/* <MsgBox>...</MsgBox> */}
                         <StyledButton onPress={handleSubmit}>
                             <ButtonText>
                                 Schedule
@@ -361,5 +329,3 @@ const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, i
 };
 
 export default Schedule;
-
-//test comment for github

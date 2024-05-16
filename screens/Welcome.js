@@ -61,7 +61,6 @@ const Welcome = ({navigation}) => {
         <StyledContainer>
         <StatusBar style="dark" />
             <InnerContainer>
-                {/* <WelcomeImage resizeMode="cover" source={require('./../assets/img2.webp')} */}
 
                 <WelcomeContainer> 
                     <PageTitle welcome={true}>Welcome Swamy</PageTitle>

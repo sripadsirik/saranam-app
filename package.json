@@ -19,6 +19,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.29",
+    "android": "^0.0.8",
     "datetimepicker": "^0.1.39",
     "expo": "^51.0.5",
     "expo-constants": "~16.0.1",
