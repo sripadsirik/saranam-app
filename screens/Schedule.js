@@ -13,7 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, where, getDocs, deleteDoc, addDoc, query, doc } from "firebase/firestore";
 //import { addDataToFirestore } from '../firebase.js'; // Import addDataToFirestore from firebase.js
 
 
@@ -141,7 +141,6 @@ const Schedule = () => {
                                 console.log(values);
 
                                 const dateParts = values.Day.split("-");
-
                                 const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));                             
 
                                 const appointmentData = {
@@ -153,7 +152,63 @@ const Schedule = () => {
                                     note: values.note, // the note
                                     userId: user.uid, // the user's ID
                                 };
-                            
+
+                                
+
+                                // Check if the date or phone number is already used
+                                const dateQuery = query(
+                                    collection(db, "appointments"),
+                                    where("Day", "==", utcDate),
+                                );
+                                const dateSnapshot = await getDocs(dateQuery);
+                                if (!dateSnapshot.empty) {
+                                    // If the date or phone number is already used, show an error message
+                                    console.error("An appointment with this date or phone number already exists.");
+                                    Alert.alert('Error', 'An appointment with this date already exists.');
+                                    return;
+                                }
+
+                                // Check if the phone number is already used
+                                const phoneQuery = query(
+                                    collection(db, "appointments"),
+                                    where("phoneNumber", "==", appointmentData.phoneNumber)
+                                );
+                                const phoneSnapshot = await getDocs(phoneQuery);
+                                if (!phoneSnapshot.empty) {
+                                    // If the phone number is already used, show an error message
+                                    console.error("An appointment with this phone number already exists.");
+                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing appointment first in Bookings');
+                                    Alert.alert('Error', 'An appointment with this phone number already exists.');
+                                    return;
+                                }
+
+                                // Check if the current user has already scheduled an appointment
+                                const userAppointmentQuery = query(
+                                    collection(db, "appointments"),
+                                    where("userId", "==", user.uid)
+                                );
+                                const userAppointmentSnapshot = await getDocs(userAppointmentQuery);
+
+                                // Check if the phone number or date is already used
+                                // const dateOrPhoneQuery = query(
+                                //     collection(db, "appointments"),
+                                //     where("Day", "==", utcDate),
+                                //     where("phoneNumber", "==", appointmentData.phoneNumber)
+                                // );
+                                // const dateOrPhoneSnapshot = await getDocs(dateOrPhoneQuery);
+
+                                // if (!dateOrPhoneSnapshot.empty) {
+                                //     // If the date or phone number is already used, show an error message
+                                //     console.error("An appointment with this date or phone number already exists.");
+                                //     Alert.alert('Error', 'An appointment with this date or phone number already exists.');
+                                //     return;
+                                if (!userAppointmentSnapshot.empty) {
+                                    // If the user has already scheduled an appointment, delete it
+                                    const docId = userAppointmentSnapshot.docs[0].id;
+                                    await deleteDoc(doc(db, 'appointments', docId));
+                                    Alert.alert('NICE', 'Your previous appointment has been deleted.');
+                                }
+
                                 // Save the appointment data in Firestore
                                 try {
                                     const docRef = await addDoc(collection(db, "appointments"), appointmentData);
