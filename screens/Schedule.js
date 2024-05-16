@@ -135,12 +135,14 @@ const Schedule = () => {
                                 Alert.alert('Error', 'Phone Number must be exactly 10 digits');
                             } else if (!values.Day) {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
+                            } else if (new Date(values.Day).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
+                                Alert.alert('Error', 'You cannot select a date before the current date');
                             } else {
                                 console.log(values);
-                                
+
                                 const dateParts = values.Day.split("-");
 
-                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));                             
 
                                 const appointmentData = {
                                     fullName: values.fullName, // the full name

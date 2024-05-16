@@ -1,10 +1,8 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { React, useState, useEffect } from 'react';
+import { View, Text, StatusBar } from 'react-native';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
-import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase.js';
+import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 import {
     InnerContainer,
@@ -23,16 +21,26 @@ import {
 import { MsgBox, ItemBox } from '../components/styles';
 
 const Booking = () => {
-    const [bookingData, setBookingData] = useState(null);
+    const [appointments, setAppointments] = useState([]);
+    const db = getFirestore();
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, "app", "IO123mmEtVuuPT2pvNrm"), (doc) => {
-            setBookingData(doc.data());
-        });
+        if (user) {
+            const q = query(collection(db, "appointments"), where("userId", "==", user.uid));
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const appointments = [];
+                querySnapshot.forEach((doc) => {
+                    appointments.push(doc.data());
+                });
+                setAppointments(appointments);
+            });
 
-        // Clean up the subscription on unmount
-        return () => unsubscribe();
-    }, []);
+            // Clean up the onSnapshot listener when the component is unmounted
+            return () => unsubscribe();
+        }
+    }, [user]);
 
     return(
         <KeyboardAvoidingWrapper>
@@ -43,18 +51,23 @@ const Booking = () => {
                     <Line />
                     <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing booking below. </MsgBox>
                     <Line />
-                    {bookingData && (
-                        <ItemBox>
-                            <Text>Full Name: {bookingData.fullName}</Text>
-                            <Text>Type of Event: {bookingData.name}</Text>
-                            <Text>Phone Number: {bookingData.phoneNumber}</Text>
-                            <Text>Date: {bookingData.Day}</Text>
-                            <Text>Additional Notes: {bookingData.note}</Text>
-                        </ItemBox>
-                    )}
+                    <View>
+                        {appointments.map((appointment, index) => (
+                            <View key={index}>
+                                <Text>{appointment.name}</Text>
+                                <Text>{appointment.phoneNumber}</Text>
+                                <Text>{appointment.name}</Text>
+                                <Text>{appointment.note}</Text>
+                                <Text>{appointment.Day.toDate().toDateString()}</Text>
+                            </View>
+                        ))}
+                    </View>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
+
+        
+
     );
 };
 
