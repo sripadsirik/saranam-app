@@ -19,15 +19,15 @@ import {ScrollView} from "react-native"
 //     StyledContainer
 // }from './../components/stylesw';
 
-const About = () => {
+const My_Bookings = () => {
 
     return(
         <View>
-            <Text>About Us</Text>
+            <Text>My_Bookings </Text>
         </View>
     );
 };
 
 
 
-export default About;
+export default My_Bookings;
