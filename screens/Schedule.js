@@ -215,10 +215,6 @@ const Schedule = () => {
                             icon="home"
                             placeholder="Abhishekam/Beeksha"
                             placeholderTextColor={darkLight}
-                            // onChangeText={(text) => {
-                            //     setName(text);
-                            //     handleChange('name')(text);
-                            // }}
                             onBlur={handleBlur('name')}
                             value={name}
                             onFocus={() => setPickerVisible(true)} // Show the Picker when the TextInput is focused
