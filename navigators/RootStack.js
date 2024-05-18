@@ -25,7 +25,7 @@ const TabIcon = ({ focused, name }) => {
 
 const BottomTabNavigator = () => {
   return (
-    <Tab.Navigator tabBarOptions={{ zIndex: 0 }}
+    <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -58,6 +58,9 @@ const BottomTabNavigator = () => {
           bottom: 0,
           left: 0,
           right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          zIndex: 0,
         },
       })}
     >
