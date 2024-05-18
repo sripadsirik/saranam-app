@@ -5,6 +5,9 @@ import {ScrollView} from "react-native";
 import { auth } from '../firebase'; // Import auth from your firebase.js file
 import { signOut } from 'firebase/auth'; // Import signOut from firebase/auth
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { Alert } from 'react-native';
+import { onAuthStateChanged } from 'firebase/auth';
+
 
 import{
 
@@ -51,9 +54,17 @@ const Welcome = ({navigation}) => {
         try {
             await signOut(auth);
             console.log('User signed out');
+            Alert.alert('Logged out', 'User logged out successfully');
             navigation.navigate('Login');
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                  console.log('User is signed in');
+                } else {
+                  console.log('User is signed out');
+                }
+              });
         } catch (error) {
-            console.error('Error signing out:', error); /*bruh*/
+            console.error('Error signing out:', error); // Log the error
         }
     }
 
