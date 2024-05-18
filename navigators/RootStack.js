@@ -25,7 +25,7 @@ const TabIcon = ({ focused, name }) => {
 
 const BottomTabNavigator = () => {
   return (
-    <Tab.Navigator
+    <Tab.Navigator tabBarOptions={{ zIndex: 0 }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -64,7 +64,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen options={{headerShown: false}} name="Welcome" component={Welcome} />
       <Tab.Screen options={{headerShown: false}} name="Schedule" component={Schedule} />
       <Tab.Screen options={{headerShown: false}} name="Bookings" component={Bookings} />
-      <Tab.Screen /*options={{headerShown: false}}*/ name="Calendar" component={Calendar} />
+      <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="Scripts" component={Scripts} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="About Us" component={About} />
     </Tab.Navigator>

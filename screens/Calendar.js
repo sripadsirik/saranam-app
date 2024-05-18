@@ -33,7 +33,7 @@ const Calendar = () => {
 
     const renderItem = (item) => {
         return (
-            <View style={{backgroundColor: 'white', padding: 20, marginRight: 10, marginTop: 17}}>
+            <View style={{backgroundColor: 'white', padding: 20, marginRight: 10, marginTop: 17, zIndex: 1 }}>
                 <Text>Name: {item.fullName}</Text>
                 <Text>Phone Number: {item.phoneNumber}</Text>
                 <Text>Pooja Type: {item.name}</Text>

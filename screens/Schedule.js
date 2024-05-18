@@ -232,6 +232,7 @@ const Schedule = () => {
                             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                                 <View style={{backgroundColor: 'white', padding: 20, borderRadius: 10}}>
                                     <Picker
+                                        style={{width: 200}}
                                         selectedValue={pickerValue} // Change this line
                                         onValueChange={(itemValue, itemIndex) => {
                                             setPickerValue(itemValue); // Change this line
