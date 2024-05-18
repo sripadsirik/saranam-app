@@ -76,22 +76,22 @@ const Booking = () => {
                     <View style={styles.container}>
                         {appointments.map((appointment, index) => (
                             <View key={index} style={styles.itemBox}>
-                            <Text style={styles.itemText}>Name:  {appointment.fullName}</Text>
-                            <Text></Text>
-                            <Text style={styles.itemText}>Phone Number: {appointment.phoneNumber}</Text>
-                            <Text></Text>
-                            <Text style={styles.itemText}>Pooja Type: {appointment.name}</Text>
-                            <Text></Text>
-                            <Text style={styles.itemText}>Your message: {appointment.note}</Text>
-                            <Text></Text>
-                            <Text style={styles.itemText}>Day: {appointment.Day.toDate().toDateString()}</Text>
-                            <Text></Text>
-                            <Text style={styles.itemText}>Trying to fix^: {appointment.day}</Text>
-                            <Text></Text>
-                            <TouchableOpacity onPress={() => handleDelete(index)}>
-                                <Icon name="trash" size={30} color="#900" />
-                            </TouchableOpacity>
-                            <Text></Text>
+                                <Text style={styles.itemText}>Name:  {appointment.fullName}</Text>
+                                <Text></Text>
+                                <Text style={styles.itemText}>Phone Number: {appointment.phoneNumber}</Text>
+                                <Text></Text>
+                                <Text style={styles.itemText}>Pooja Type: {appointment.name}</Text>
+                                <Text></Text>
+                                <Text style={styles.itemText}>Your message: {appointment.note}</Text>
+                                <Text></Text>
+                                <Text style={styles.itemText}>Day: {appointment.Day.toDate().toDateString()}</Text>
+                                <Text></Text>
+                                <Text style={styles.itemText}>Trying to fix^: {appointment.day}</Text>
+                                <Text></Text>
+                                <TouchableOpacity onPress={() => handleDelete(index)}>
+                                    <Icon name="trash" size={30} color="#900" />
+                                </TouchableOpacity>
+                                <Text></Text>
                             </View>
                         ))}
                     </View>
