@@ -112,7 +112,6 @@ const Signup = ({navigation}) => {
                         setHidePassword={setHidePassword}
                     />
 
-                    <MsgBox>...</MsgBox>
                     <StyledButton onPress={handleSubmit}>
                         <ButtonText>
                             Signup

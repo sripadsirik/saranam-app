@@ -28,7 +28,7 @@ import{
     ExtraText,
     TextLink,
     TextLinkContent
-}from './../components/stylesl';
+}from './../components/styles';
 
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
@@ -47,7 +47,7 @@ const Login = ({navigation}) => {
             <StyledContainer>
                 <StatusBar style="dark" />
                 <InnerContainer>
-                    <PageLogo resizeMode="cover" source={require('./../assets/img1.webp')} />
+                    {/* <PageLogo resizeMode="cover" source={require('./../assets/img1.webp')} /> */}
                     <PageTitle>Saranam Yatra Chicago</PageTitle>
                     <SubTitle>Account Login</SubTitle>
 
