@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {Formik} from 'formik';
 import {View} from 'react-native';
@@ -39,12 +39,24 @@ const {brand, darkLight, primary} = Colors;
 
 const Start = ({navigation}) => {
     let sound = new Audio.Sound();
+    const [isPlaying, setIsPlaying] = useState(true);
+
+    const toggleSound = async () => {
+        if (isPlaying) {
+        await sound.stopAsync();
+        } else {
+        await sound.playAsync();
+        }
+        setIsPlaying(!isPlaying);
+    };
 
     useEffect(() => {
         const loadSound = async () => {
         try {
             await sound.loadAsync(require('../assets/saranam.mp3'));
+            if (isPlaying) {
             await sound.playAsync();
+            }
         } catch (error) {
             console.log(error);
         }
@@ -55,16 +67,19 @@ const Start = ({navigation}) => {
         return () => {
         sound.unloadAsync();
         };
-    }, []);
+    }, [isPlaying]);
+
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
-                <StatusBar style="dark" />
                 <InnerContainer>
                     <PageLogo resizeMode="cover" source={require('./../assets/img1.webp')} />
                     <PageTitle>Saranam Yatra Chicago</PageTitle>
 
                     <SubTitle> Swamy Saranam </SubTitle>
+                    <StatusBar style="dark" />
+                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
+                    <Text> </Text>
 
                     <Text> If you haven't signed up to be a swamy yet, please do so below: </Text>
                     <Button
