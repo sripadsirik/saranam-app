@@ -71,15 +71,18 @@ const Start = ({navigation}) => {
                         title="Swamy Signup"
                         onPress={() => Linking.openURL('https://www.example.com')}
                     />
-
-                    <ExtraView>
-                        <ExtraText>
-                            Don't Have an Account already?
-                        </ExtraText>
-                        <TextLink onPress={() => navigation.navigate('Signup')}>
-                            <TextLinkContent> Signup</TextLinkContent>
-                        </TextLink>
-                    </ExtraView>
+                    <Line></Line>
+                    <Text>
+                        Next to use the app, either signup or login:
+                    </Text>
+                    <Text> </Text>
+                    <TextLink onPress={() => navigation.navigate('Signup')}>
+                        <TextLinkContent> Signup </TextLinkContent>
+                    </TextLink>
+                    <Text> </Text>
+                    <TextLink onPress={() => navigation.navigate('Login')}>
+                        <TextLinkContent> Login </TextLinkContent>
+                    </TextLink>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
