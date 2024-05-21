@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {Formik} from 'formik';
 import {View} from 'react-native';
@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth'; // Import signInWith
 import { auth } from '../firebase'; // Import the auth object from your firebase.js file
 import '../navigators/RootStack';
 import { Alert } from 'react-native';
+import { Audio } from 'expo-av';
 
 import{
     StyledContainer,
@@ -35,6 +36,25 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const {brand, darkLight, primary} = Colors;
 
 const Login = ({navigation}) => {
+    let sound = new Audio.Sound();
+
+    useEffect(() => {
+        const loadSound = async () => {
+        try {
+            await sound.loadAsync(require('../assets/saranam.mp3'));
+            await sound.playAsync();
+        } catch (error) {
+            console.log(error);
+        }
+        };
+
+        loadSound();
+
+        return () => {
+        sound.unloadAsync();
+        };
+    }, []);
+
     const [hidePassword, setHidePassword] = useState(true); 
 
     const isValidEmail = (email) => {

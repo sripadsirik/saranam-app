@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {Formik} from 'formik';
 import {View} from 'react-native';
@@ -9,6 +9,7 @@ import '../navigators/RootStack';
 import { Alert } from 'react-native';
 import { Text } from 'react-native';
 import { Button, Linking } from 'react-native';
+import { Audio } from 'expo-av';
 
 import{
     StyledContainer,
@@ -37,6 +38,24 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const {brand, darkLight, primary} = Colors;
 
 const Start = ({navigation}) => {
+    let sound = new Audio.Sound();
+
+    useEffect(() => {
+        const loadSound = async () => {
+        try {
+            await sound.loadAsync(require('../assets/saranam.mp3'));
+            await sound.playAsync();
+        } catch (error) {
+            console.log(error);
+        }
+        };
+
+        loadSound();
+
+        return () => {
+        sound.unloadAsync();
+        };
+    }, []);
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -52,6 +71,15 @@ const Start = ({navigation}) => {
                         title="Swamy Signup"
                         onPress={() => Linking.openURL('https://www.example.com')}
                     />
+
+                    <ExtraView>
+                        <ExtraText>
+                            Don't Have an Account already?
+                        </ExtraText>
+                        <TextLink onPress={() => navigation.navigate('Signup')}>
+                            <TextLinkContent> Signup</TextLinkContent>
+                        </TextLink>
+                    </ExtraView>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
