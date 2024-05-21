@@ -93,7 +93,7 @@ const RootStack = () => {
         }}
         initialRouteName="Start"
       >
-        <Stack.Screen name="Start" component={Start} options={{ headerShown: true }} />
+        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />

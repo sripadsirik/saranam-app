@@ -8,7 +8,7 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 import {auth, analytics} from '../firebase';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Alert } from 'react-native';
-import { Audio } from 'expo-av';
+import { Text } from 'react-native';
 
 
 
@@ -37,24 +37,25 @@ import{
 const {brand, darkLight, primary} = Colors;
 
 const Signup = ({navigation}) => {
-    let sound = new Audio.Sound();
+    // let sound = new Audio.Sound();
 
-    useEffect(() => {
-        const loadSound = async () => {
-        try {
-            await sound.loadAsync(require('../assets/saranam.mp3'));
-            await sound.playAsync();
-        } catch (error) {
-            console.log(error);
-        }
-        };
+    // useEffect(() => {
+    //     const loadSound = async () => {
+    //     try {
+    //         await sound.loadAsync(require('../assets/saranam.mp3'));
+    //         await sound.playAsync();
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     };
 
-        loadSound();
+    //     loadSound();
 
-        return () => {
-        sound.unloadAsync();
-        };
-    }, []);
+    //     return () => {
+    //     sound.unloadAsync();
+    //     };
+    // }, []);
+
     const [hidePassword, setHidePassword] = useState(true); 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState('');
@@ -145,6 +146,10 @@ const Signup = ({navigation}) => {
                             <TextLinkContent> Login</TextLinkContent>
                         </TextLink>
                     </ExtraView>
+                    <Text> </Text>
+                    <TextLink onPress={() => navigation.navigate('Start')}>
+                        <TextLinkContent> Back to Start Page </TextLinkContent>
+                    </TextLink>
                 </StyledFormArea>)}
                 </Formik>
             </InnerContainer>
