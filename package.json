@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "^8.0.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-google-signin/google-signin": "^11.0.1",
@@ -22,10 +22,12 @@
     "android": "^0.0.8",
     "datetimepicker": "^0.1.39",
     "expo": "^51.0.5",
+    "expo-av": "~14.0.5",
     "expo-constants": "~16.0.1",
+    "expo-google-app-auth": "~8.3.0",
     "expo-linear-gradient": "~13.0.2",
     "expo-status-bar": "~1.12.1",
-    "firebase": "^10.12.0",
+    "firebase": "^10.12.1",
     "formik": "^2.4.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -43,7 +45,10 @@
     "react-native-web": "~0.19.6",
     "styled-components": "^6.1.6",
     "yup": "^1.4.0",
-    "expo-av": "~14.0.5"
+    "expo-auth-session": "~5.5.2",
+    "expo-crypto": "~13.0.2",
+    "expo-web-browser": "~13.0.3",
+    "expo-application": "~5.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
