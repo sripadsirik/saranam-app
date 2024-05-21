@@ -90,7 +90,7 @@ const RootStack = () => {
             paddingLeft: 20,
           },
         }}
-        initialRouteName="Login"
+        initialRouteName="Start"
       >
         <Stack.Screen name="Start" component={Start} options={{ headerShown: true }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
