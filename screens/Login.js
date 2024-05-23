@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {Formik} from 'formik';
 import {View} from 'react-native';
@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth'; // Import signInWith
 import { auth } from '../firebase'; // Import the auth object from your firebase.js file
 import '../navigators/RootStack';
 import { Alert } from 'react-native';
+import { Text } from 'react-native';
 
 import{
     StyledContainer,
@@ -28,13 +29,32 @@ import{
     ExtraText,
     TextLink,
     TextLinkContent
-}from './../components/stylesl';
+}from './../components/styles';
 
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 const {brand, darkLight, primary} = Colors;
 
 const Login = ({navigation}) => {
+    // let sound = new Audio.Sound();
+
+    // useEffect(() => {
+    //     const loadSound = async () => {
+    //     try {
+    //         await sound.loadAsync(require('../assets/saranam.mp3'));
+    //         await sound.playAsync();
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     };
+
+    //     loadSound();
+
+    //     return () => {
+    //     sound.unloadAsync();
+    //     };
+    // }, []);
+
     const [hidePassword, setHidePassword] = useState(true); 
 
     const isValidEmail = (email) => {
@@ -47,7 +67,7 @@ const Login = ({navigation}) => {
             <StyledContainer>
                 <StatusBar style="dark" />
                 <InnerContainer>
-                    <PageLogo resizeMode="cover" source={require('./../assets/img1.webp')} />
+                    {/* <PageLogo resizeMode="cover" source={require('./../assets/img1.webp')} /> */}
                     <PageTitle>Saranam Yatra Chicago</PageTitle>
                     <SubTitle>Account Login</SubTitle>
 
@@ -113,6 +133,10 @@ const Login = ({navigation}) => {
                                 <TextLinkContent> Signup</TextLinkContent>
                             </TextLink>
                         </ExtraView>
+                        <Text> </Text>
+                        <TextLink onPress={() => navigation.navigate('Start')}>
+                            <TextLinkContent> Back to Start Page </TextLinkContent>
+                        </TextLink>
                     </StyledFormArea>)}
                     </Formik>
                 </InnerContainer>

@@ -15,6 +15,8 @@ import Scripts from '../screens/Scripts';
 import About from '../screens/About';
 import Calendar from '../screens/Calendar';
 import Bookings from '../screens/Booking';
+import Start from '../screens/Start';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,9 +91,10 @@ const RootStack = () => {
             paddingLeft: 20,
           },
         }}
-        initialRouteName="Login"
+        initialRouteName="Start"
       >
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
