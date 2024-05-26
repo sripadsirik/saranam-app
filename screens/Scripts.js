@@ -4,6 +4,7 @@ import { fetchUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
+import { ScrollView } from 'react-native';
 
 import{
     StyledContainer,
@@ -40,126 +41,131 @@ const Scripts = () => {
 
   
     return (
-        <View style={styles.container}>
-        <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            return (
-                <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                </TouchableOpacity>
-            );
-            })}
-        </View>
-        <Line />
+        <ScrollView>
+            <View style={styles.container}>
+            <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
         
+                return (
+                    <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                    <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                    </TouchableOpacity>
+                );
+                })}
+            </View>
+            <Line />
+            
 
-        <SubTitle style={styles.text1}>Ganesha Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
-
-
-        <SubTitle style={styles.text1}>Saibaba Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
-
-
-        <SubTitle style={styles.text1}>Devi Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
-
+            <SubTitle style={styles.text1}>Ganesha Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
         
-        <SubTitle style={styles.text1}>Vishnu Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
+
+
+            <SubTitle style={styles.text1}>Saibaba Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
         
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
 
-        <SubTitle style={styles.text1}>Shiva Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
+
+            <SubTitle style={styles.text1}>Devi Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
         
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
 
-        <SubTitle style={styles.text1}>Murugan Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
+            
+            <SubTitle style={styles.text1}>Vishnu Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
+        
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
+            
+
+            <SubTitle style={styles.text1}>Shiva Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
+        
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
+            
+
+            <SubTitle style={styles.text1}>Murugan Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
+        
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
 
 
-        <SubTitle style={styles.text1}>Hanuman Songs Lyrics</SubTitle>
-        <View style={styles.row}>
-            {urls.map((item, index) => {
-            const nameWithoutExtension = item.name.replace('.pdf', '');
-    
-            // return (
-            //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            //     </TouchableOpacity>
-            // );
-            })}
-        </View>
-        <Line />
-        </View>
+            <SubTitle style={styles.text1}>Hanuman Songs Lyrics</SubTitle>
+            <View style={styles.row}>
+                {urls.map((item, index) => {
+                const nameWithoutExtension = item.name.replace('.pdf', '');
+        
+                // return (
+                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                //     </TouchableOpacity>
+                // );
+                })}
+            </View>
+            <Line />
+            <Line />
+            <Line />
+            <Line />
+            </View>
+        </ScrollView>
     );
 };
 
