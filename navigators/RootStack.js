@@ -44,7 +44,7 @@ const BottomTabNavigator = () => {
           else if (route.name === 'Bookings') {
             iconName = 'bonfire-outline';
           }
-          else if (route.name === 'Scripts') {
+          else if (route.name === 'Songs') {
             iconName = 'document-text-outline';
           }
           else if (route.name === 'About Us') {
@@ -70,7 +70,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen options={{headerShown: false}} name="Schedule" component={Schedule} />
       <Tab.Screen options={{headerShown: false}} name="Bookings" component={Bookings} />
       <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
-      <Tab.Screen options={{headerShown: false}} name="Scripts" component={Scripts} />
+      <Tab.Screen options={{headerShown: false}} name="Songs" component={Scripts} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="About Us" component={About} />
     </Tab.Navigator>
   );
