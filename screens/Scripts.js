@@ -39,24 +39,23 @@ const Scripts = () => {
   };
 
   
-return (
-    <View style={styles.container}>
-      <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
-      <View style={styles.row}>
-        {urls.map((item, index) => {
-          // Remove .pdf extension from the name
-          const nameWithoutExtension = item.name.replace('.pdf', '');
-  
-          return (
-            <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-              <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <Line />
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+        <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
+        <View style={styles.row}>
+            {urls.map((item, index) => {
+            const nameWithoutExtension = item.name.replace('.pdf', '');
+    
+            return (
+                <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                </TouchableOpacity>
+            );
+            })}
+        </View>
+        <Line />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
