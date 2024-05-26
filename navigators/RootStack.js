@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './../components/styles';
-const { primary, tertiary, brand } = Colors;
+const { tertiary, brand } = Colors;
 
 import Login from './../screens/Login'; 
 import Signup from './../screens/Signup';
@@ -70,7 +70,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen options={{headerShown: false}} name="Schedule" component={Schedule} />
       <Tab.Screen options={{headerShown: false}} name="Bookings" component={Bookings} />
       <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
-      <Tab.Screen /*options={{headerShown: false}}*/ name="Scripts" component={Scripts} />
+      <Tab.Screen options={{headerShown: false}} name="Scripts" component={Scripts} />
       <Tab.Screen /*options={{headerShown: false}}*/ name="About Us" component={About} />
     </Tab.Navigator>
   );
