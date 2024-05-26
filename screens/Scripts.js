@@ -25,14 +25,40 @@ const Scripts = () => {
   };
 
   return (
-    <>
-      {urls.map((url, index) => (
-        <TouchableOpacity key={index} onPress={() => openPDF(url)}>
-          <Text>Open PDF {index + 1}</Text>
-        </TouchableOpacity>
-      ))}
-    </>
+    <View style={styles.container}>
+      <Text>Ayappa Songs Lyrics</Text>
+      <View style={styles.row}>
+        {urls.map((item, index) => (
+          <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+            <Text style={styles.text}>{item.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
   );
 };
 
-export default Scripts;
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 10,
+    },
+    row: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    box: {
+      width: '30%',
+      height: 100,
+      margin: 5,
+      backgroundColor: '#ddd',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    text: {
+      textAlign: 'center',
+    },
+  });
+  
+  export default Scripts;

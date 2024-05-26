@@ -35,6 +35,7 @@ async function initializeFirebaseAuth() {
     persistence: getReactNativePersistence(AsyncStorage)
   });
 }
+
 async function fetchUrls() {
   const storage = getStorage();
   const storageRef = ref(storage, '/Songs/Ayappa');
@@ -43,7 +44,13 @@ async function fetchUrls() {
   const res = await listAll(storageRef);
 
   // Fetch the download URL for each file
-  const urls = await Promise.all(res.items.map(item => getDownloadURL(item)));
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
 
   return urls;
 }
