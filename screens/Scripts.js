@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { fetchUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
+import { StyleSheet, View } from 'react-native';
+import { Line } from '../components/styles.js';
 
 const Scripts = () => {
   const [urls, setUrls] = useState([]);
@@ -34,6 +36,7 @@ const Scripts = () => {
           </TouchableOpacity>
         ))}
       </View>
+      <Line />
     </View>
   );
 };
