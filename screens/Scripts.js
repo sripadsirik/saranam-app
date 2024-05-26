@@ -26,15 +26,21 @@ const Scripts = () => {
     await WebBrowser.openBrowserAsync(url);
   };
 
-  return (
+  
+return (
     <View style={styles.container}>
       <Text>Ayappa Songs Lyrics</Text>
       <View style={styles.row}>
-        {urls.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-            <Text style={styles.text}>{item.name}</Text>
-          </TouchableOpacity>
-        ))}
+        {urls.map((item, index) => {
+          // Remove .pdf extension from the name
+          const nameWithoutExtension = item.name.replace('.pdf', '');
+  
+          return (
+            <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+              <Text style={styles.text}>{nameWithoutExtension}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
       <Line />
     </View>
