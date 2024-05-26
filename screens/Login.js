@@ -8,6 +8,7 @@ import { auth } from '../firebase'; // Import the auth object from your firebase
 import '../navigators/RootStack';
 import { Alert } from 'react-native';
 import { Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import{
     StyledContainer,
@@ -35,7 +36,8 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 const {brand, darkLight, primary} = Colors;
 
-const Login = ({navigation}) => {
+const Login = ({}) => {
+    const navigation = useNavigation();
     const [hidePassword, setHidePassword] = useState(true); 
 
     const isValidEmail = (email) => {
@@ -63,7 +65,10 @@ const Login = ({navigation}) => {
                             try {
                               await signInWithEmailAndPassword(auth, values.email, values.password);
                               console.log('User logged in successfully!', values.email);
-                              navigation.navigate('BottomTabs');
+                              navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'BottomTabs' }],
+                              });
                             } catch (error) {
                               console.error('Error logging in:', error);
                               Alert.alert('Error', 'The password is incorrect. (check your email too)'); // Display an alert with the error message
