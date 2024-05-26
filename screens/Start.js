@@ -53,7 +53,10 @@ const Start = ({navigation}) => {
     useEffect(() => {
         const loadSound = async () => {
         try {
-            await sound.loadAsync(require('../assets/saranam.mp3'));
+            await sound.loadAsync(
+                require('../assets/saranam.mp3'),
+                { isLooping: true },
+            );
             if (isPlaying) {
             await sound.playAsync();
             }
