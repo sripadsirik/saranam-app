@@ -5,6 +5,18 @@ import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 
+import{
+    StyledContainer,
+    InnerContainer,
+    PageLogo,
+    PageTitle,
+    SubTitle,
+    Colors,
+    TextLink,
+    TextLinkContent
+}from './../components/stylesl';
+import { MsgBox, ItemBox } from '../components/styles';
+
 const Scripts = () => {
   const [urls, setUrls] = useState([]);
 
@@ -29,7 +41,7 @@ const Scripts = () => {
   
 return (
     <View style={styles.container}>
-      <Text>Ayappa Songs Lyrics</Text>
+      <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
       <View style={styles.row}>
         {urls.map((item, index) => {
           // Remove .pdf extension from the name
@@ -37,7 +49,7 @@ return (
   
           return (
             <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-              <Text style={styles.text}>{nameWithoutExtension}</Text>
+              <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
             </TouchableOpacity>
           );
         })}
@@ -49,6 +61,7 @@ return (
 
 const styles = StyleSheet.create({
     container: {
+      marginTop: 50,
       flex: 1,
       padding: 10,
     },
@@ -67,6 +80,10 @@ const styles = StyleSheet.create({
     },
     text: {
       textAlign: 'center',
+    },
+    text1: {
+        textAlign: 'center',
+        fontSize: 20,
     },
   });
   
