@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls } from '../firebase.js';
+import { fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
@@ -23,6 +23,7 @@ const Scripts = () => {
   const [ganeshaUrls, setGaneshaUrls] = useState([]);
   const [saiUrls, setSaiUrls] = useState([]);
   const [deviUrls, setDeviUrls] = useState([]);
+  const [vishnuUrls, setVishnuUrls] = useState([]);
 
 
   useEffect(() => {
@@ -55,6 +56,14 @@ const Scripts = () => {
           const deviUrls = await fetchDeviUrls();
           console.log(deviUrls);
           setDeviUrls(deviUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const vishnuUrls = await fetchVishnuUrls();
+          console.log(vishnuUrls);
+          setVishnuUrls(vishnuUrls);
         } catch (error) {
           console.error(error);
         }
