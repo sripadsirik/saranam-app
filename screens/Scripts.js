@@ -217,14 +217,6 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
       justifyContent: 'space-between',
     },
-    // box: {
-    //   width: '30%',
-    //   height: 100,
-    //   margin: 5,
-    //   backgroundColor: '#ddd',
-    //   justifyContent: 'center',
-    //   alignItems: 'center',
-    // },
     box: {
         width: '28%',
         height: 100,
