@@ -114,7 +114,7 @@ async function fetchDeviUrls() {
 
 async function fetchVishnuUrls() {
   const storage = getStorage();
-  const storageRef = ref(storage, '/Songs/Devi');
+  const storageRef = ref(storage, '/Songs/Vishnu');
 
   // Fetch the list of files in the directory
   const res = await listAll(storageRef);

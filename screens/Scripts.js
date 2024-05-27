@@ -142,14 +142,14 @@ const Scripts = () => {
             
             <SubTitle style={styles.text1}>Vishnu Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
+                {vishnuUrls.map((item, index) => {
                   const nameWithoutExtension = item.name.replace('.pdf', '');
           
-                  // return (
-                  //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                  //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                  //     </TouchableOpacity>
-                  // );
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
