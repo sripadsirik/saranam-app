@@ -9,7 +9,6 @@ import { ScrollView } from 'react-native';
 import { auth, analytics } from '../firebase.js';
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { Alert } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
@@ -56,20 +55,10 @@ const Schedule = () => {
     const [address, setAddress] = useState(''); // New state for the note box
     
     const [show, setShow] = useState(false);
-    const [dob, setDob] = useState();
     const [date, setDate] = useState(new Date());
 
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [pickerValue, setPickerValue] = useState('');
-
-
-    const onChange = (handleChange, event, selectDate) => {
-        const currentDate = selectDate || date;
-        setDate(currentDate);
-        const formattedDate = currentDate.toDateString();  
-        setDob(new Date(formattedDate));
-        handleChange('Day')(formattedDate);
-    };
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
