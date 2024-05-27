@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls } from '../firebase.js';
+import { fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls, fetchHanuUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
@@ -26,6 +26,7 @@ const Scripts = () => {
   const [vishnuUrls, setVishnuUrls] = useState([]);
   const [shivaUrls, setShivaUrls] = useState([]);
   const [muruUrls, setMuruUrls] = useState([]);
+  const [hanuUrls, setHanuUrls] = useState([]);
 
 
   useEffect(() => {
@@ -82,6 +83,14 @@ const Scripts = () => {
           const muruUrls = await fetchMuruUrls();
           console.log(muruUrls);
           setMuruUrls(muruUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const hanuUrls = await fetchHanuUrls();
+          console.log(hanuUrls);
+          setHanuUrls(hanuUrls);
         } catch (error) {
           console.error(error);
         }
@@ -205,14 +214,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Hanuman Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
+                {hanuUrls.map((item, index) => {
                   const nameWithoutExtension = item.name.replace('.pdf', '');
           
-                  // return (
-                  //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                  //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                  //     </TouchableOpacity>
-                  // );
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
