@@ -7,6 +7,9 @@ import { signOut } from 'firebase/auth'; // Import signOut from firebase/auth
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { Alert } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useRef } from 'react';
+import { Audio } from 'expo-av';
+import { Button } from 'react-native';
 
 
 import{
@@ -26,6 +29,42 @@ import{
 }from './../components/stylesw';
 
 const Welcome = ({navigation}) => {
+  const sound = useRef(new Audio.Sound());
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  const toggleSound = async () => {
+    if (isPlaying) {
+      await sound.current.stopAsync();
+    } else {
+      await sound.current.setPositionAsync(6000);
+      await sound.current.playAsync();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        await sound.current.loadAsync(
+          require('../assets/saranam.mp3'),
+          { isLooping: true },
+        );
+        await sound.current.setPositionAsync(6000);
+        if (isPlaying) {
+          await sound.current.playAsync();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loadSound();
+
+    // Unload sound when component unmounts
+    return () => {
+      sound.current.unloadAsync();
+    };
+  }, []);
+
     const [userEmail, setUserEmail] = useState(null);
 
     useEffect(() => {
@@ -76,6 +115,7 @@ const Welcome = ({navigation}) => {
                 <WelcomeContainer> 
                     <PageTitle welcome={true}>Welcome Swamy</PageTitle>
                     <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
+                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
                 <StyledFormArea>
                     <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
 

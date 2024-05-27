@@ -4,6 +4,7 @@ import '../navigators/RootStack';
 import { Text } from 'react-native';
 import { Button, Linking } from 'react-native';
 import { Audio } from 'expo-av';
+import { useRef } from 'react';
 
 import{
     StyledContainer,
@@ -22,39 +23,41 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const {brand, darkLight, primary} = Colors;
 
 const Start = ({navigation}) => {
-    let sound = new Audio.Sound();
-    const [isPlaying, setIsPlaying] = useState(true);
+    const sound = useRef(new Audio.Sound());
+  const [isPlaying, setIsPlaying] = useState(true);
 
-    const toggleSound = async () => {
+  const toggleSound = async () => {
+    if (isPlaying) {
+      await sound.current.stopAsync();
+    } else {
+      await sound.current.setPositionAsync(6000);
+      await sound.current.playAsync();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        await sound.current.loadAsync(
+          require('../assets/saranam.mp3'),
+          { isLooping: true },
+        );
+        await sound.current.setPositionAsync(6000);
         if (isPlaying) {
-        await sound.stopAsync();
-        } else {
-        await sound.playAsync();
+          await sound.current.playAsync();
         }
-        setIsPlaying(!isPlaying);
+      } catch (error) {
+        console.log(error);
+      }
     };
+    loadSound();
 
-    useEffect(() => {
-        const loadSound = async () => {
-        try {
-            await sound.loadAsync(
-                require('../assets/saranam.mp3'),
-                { isLooping: true },
-            );
-            if (isPlaying) {
-            await sound.playAsync();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-        };
-
-        loadSound();
-
-        return () => {
-        sound.unloadAsync();
-        };
-    }, [isPlaying]);
+    // Unload sound when component unmounts
+    return () => {
+      sound.current.unloadAsync();
+    };
+  }, []);
 
     return(
         <KeyboardAvoidingWrapper>
