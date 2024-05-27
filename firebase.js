@@ -55,10 +55,29 @@ async function fetchUrls() {
   return urls;
 }
 
+async function fetchGaneshaUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Ganesha'); // Changed to Ganesha
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
 initializeFirebaseAuth();
 
 //const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
 
-export { auth, db, fetchUrls };
+export { auth, db, fetchUrls, fetchGaneshaUrls };

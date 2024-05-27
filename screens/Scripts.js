@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { fetchUrls } from '../firebase.js';
+import { fetchUrls, fetchGaneshaUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
@@ -20,6 +20,8 @@ import { MsgBox, ItemBox } from '../components/styles';
 
 const Scripts = () => {
   const [urls, setUrls] = useState([]);
+  const [ganeshaUrls, setGaneshaUrls] = useState([]);
+
 
   useEffect(() => {
     async function useUrls() {
@@ -27,6 +29,14 @@ const Scripts = () => {
           const urls = await fetchUrls();
           console.log(urls);
           setUrls(urls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const ganeshaUrls = await fetchGaneshaUrls();
+          console.log(ganeshaUrls);
+          setGaneshaUrls(ganeshaUrls);
         } catch (error) {
           console.error(error);
         }
@@ -60,14 +70,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Ganesha Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
+                {ganeshaUrls.map((item, index) => {
                 const nameWithoutExtension = item.name.replace('.pdf', '');
         
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                  return (
+                    <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                    </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
