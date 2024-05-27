@@ -287,7 +287,7 @@ const Schedule = () => {
                             onFocus={showDatePicker} // Add this line
                         />
 
-                        {/* Note box */}
+                        {/* Address box */}
                         <MyTextInput 
                             label="Your Address"
                             icon="note"
