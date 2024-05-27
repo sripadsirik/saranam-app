@@ -53,7 +53,7 @@ const Schedule = () => {
     const [phoneNumber, setPhoneNumber] = useState(''); // New state for the phone number
     
     
-    const [note, setNote] = useState(''); // New state for the note box
+    const [address, setAddress] = useState(''); // New state for the note box
     
     const [show, setShow] = useState(false);
     const [dob, setDob] = useState();
@@ -103,7 +103,7 @@ const Schedule = () => {
                     
 
                     <Formik
-                        initialValues = {{fullName: '', name: '', phoneNumber: '', Day: '', note: ''}} // Added phoneNumber to initialValues
+                        initialValues = {{fullName: '', name: '', phoneNumber: '', Day: '', address: ''}} // Added phoneNumber to initialValues
                         onSubmit={async (values) => {
                             if (!values.fullName || values.fullName.length < 2 || values.fullName.length > 100) {
                                 Alert.alert('Error', 'Full Name must be between 2 and 100 characters');
@@ -115,6 +115,8 @@ const Schedule = () => {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
                             } else if (new Date(values.Day).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
                                 Alert.alert('Error', 'You cannot select a date before the current date');
+                            }else if (!values.address || values.address.length < 2 || values.address.length > 100) {
+                                Alert.alert('Error', 'Address must be between 2 and 100 characters');
                             } else {
                                 console.log(values);
 
@@ -127,7 +129,7 @@ const Schedule = () => {
                                     phoneNumber: Number(values.phoneNumber), // the phone number
                                     Day: utcDate, // the selected date
                                     day: values.Day,
-                                    note: values.note, // the note
+                                    address: values.address, // the address
                                     userId: user.uid, // the user's ID
                                 };
 
@@ -211,7 +213,7 @@ const Schedule = () => {
                         />
                         
                         <MyTextInput 
-                            label="A = Abhishekam or B = Beeksha"
+                            label="Abhishekam or Beeksha"
                             icon="home"
                             placeholder="Abhishekam/Beeksha"
                             placeholderTextColor={darkLight}
@@ -287,13 +289,13 @@ const Schedule = () => {
 
                         {/* Note box */}
                         <MyTextInput 
-                            label="Anything else you'd like us to know?"
+                            label="Your Address"
                             icon="note"
-                            placeholder="Your message..."
+                            placeholder="111 Howle Rd"
                             placeholderTextColor={darkLight}
-                            onChangeText={handleChange('note')}
-                            onBlur={handleBlur('note')}
-                            value={values.note}
+                            onChangeText={handleChange('address')}
+                            onBlur={handleBlur('address')}
+                            value={values.address}
                         />
 
                         <StyledButton onPress={handleSubmit}>
