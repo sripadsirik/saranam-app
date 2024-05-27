@@ -74,10 +74,29 @@ async function fetchGaneshaUrls() {
   return urls;
 }
 
+async function fetchSaiUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Sai Baba'); // Changed to Ganesha
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
 initializeFirebaseAuth();
 
 //const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
 
-export { auth, db, fetchUrls, fetchGaneshaUrls };
+export { auth, db, fetchUrls, fetchGaneshaUrls, fetchSaiUrls };
