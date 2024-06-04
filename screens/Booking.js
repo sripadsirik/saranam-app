@@ -82,7 +82,7 @@ const Booking = () => {
                                 <Text></Text>
                                 <Text style={styles.itemText}>Pooja Type: {appointment.name}</Text>
                                 <Text></Text>
-                                <Text style={styles.itemText}>Your message: {appointment.note}</Text>
+                                <Text style={styles.itemText}>Address: {appointment.address}</Text>
                                 <Text></Text>
                                 <Text style={styles.itemText}>Day: {appointment.Day.toDate().toDateString()}</Text>
                                 <Text></Text>

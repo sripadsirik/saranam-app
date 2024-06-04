@@ -37,7 +37,7 @@ const Calendar = () => {
                 <Text>Name: {item.fullName}</Text>
                 <Text>Phone Number: {item.phoneNumber}</Text>
                 <Text>Pooja Type: {item.name}</Text>
-                <Text>Message: {item.note}</Text>
+                <Text>Address: {item.address}</Text>
             </View>
         );
     };
