@@ -89,9 +89,10 @@ const Welcome = ({navigation}) => {
         return unsubscribe;
       }, []);
 
-    const handleSignOut = async () => {
+      const handleSignOut = async () => {
         try {
             await signOut(auth);
+            stopMusic(); // Add this line to stop the music
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
             navigation.navigate('Login');
