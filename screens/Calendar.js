@@ -4,24 +4,37 @@ import { Agenda } from 'react-native-calendars';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { onSnapshot } from 'firebase/firestore';
+import { deleteDoc, doc } from "firebase/firestore";
 
 
 const Calendar = () => {
     const [items, setItems] = useState({});
 
     useEffect(() => {
-        const fetchData = () => {
+        const fetchData = async () => {
             const query = collection(db, 'appointments');
-            const unsubscribe = onSnapshot(query, (querySnapshot) => {
+            const unsubscribe = onSnapshot(query, async (querySnapshot) => {
                 let data = {}; // Clear out the data object
-                querySnapshot.forEach((doc) => {
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
+    
+                for (let i = 0; i < querySnapshot.docs.length; i++) {
+                    const doc = querySnapshot.docs[i];
                     const appointmentData = doc.data();
-                    const date = new Date(appointmentData.Day.seconds * 1000).toISOString().split('T')[0];
-                    if (!data[date]) {
-                        data[date] = [];
+                    const appointmentDate = new Date(appointmentData.Day.seconds * 1000);
+                    appointmentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
+    
+                    if (appointmentDate < currentDate) {
+                        // If the appointment date is before the current date, delete the document
+                        await deleteDoc(doc.ref);
+                    } else {
+                        const date = appointmentDate.toISOString().split('T')[0];
+                        if (!data[date]) {
+                            data[date] = [];
+                        }
+                        data[date].push(appointmentData);
                     }
-                    data[date].push(appointmentData);
-                });
+                }
                 setItems(data);
             });
     
