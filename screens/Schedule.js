@@ -110,7 +110,7 @@ const Schedule = () => {
                                 console.log(values);
 
                                 const dateParts = values.Day.split("-");
-                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));                             
+                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0));                             
 
                                 const appointmentData = {
                                     fullName: values.fullName, // the full name
