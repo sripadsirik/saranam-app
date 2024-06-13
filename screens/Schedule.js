@@ -181,7 +181,7 @@ const Schedule = () => {
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
                         
 
-                        {show && (
+                        {/* {show && (
                             <DateTimePickerModal
                                 isVisible={isDatePickerVisible}
                                 mode="date"
@@ -189,7 +189,7 @@ const Schedule = () => {
                                 onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
                                 onCancel={hideDatePicker}
                             />
-                        )}
+                        )} */}
                     
                         <MyTextInput 
                             label="Full Name"

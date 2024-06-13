@@ -5,6 +5,11 @@ import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 import { ScrollView } from 'react-native';
+// import * as FileSystem from 'expo-file-system';
+// import FileViewer from 'react-native-file-viewer';
+// import { Linking, Platform } from 'react-native';
+// import * as Sharing from 'expo-sharing';
+
 
 import{
     StyledContainer,
@@ -27,6 +32,10 @@ const Scripts = () => {
   const [shivaUrls, setShivaUrls] = useState([]);
   const [muruUrls, setMuruUrls] = useState([]);
   const [hanuUrls, setHanuUrls] = useState([]);
+  const downloadedFiles = {};
+  const [selectedPdfUri, setSelectedPdfUri] = useState(null);
+
+
 
 
   useEffect(() => {
@@ -99,14 +108,21 @@ const Scripts = () => {
     useUrls();
   }, []);
 
+  // const openPDF = async (url) => {
+  //   await WebBrowser.openBrowserAsync(url);
+  // };
   const openPDF = async (url) => {
-    await WebBrowser.openBrowserAsync(url);
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch (error) {
+      console.error(`Failed to open file: ${url}`, error);
+    }
   };
 
   
     return (
         <ScrollView>
-            <View style={styles.container}>
+          <View style={styles.container}>
             <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
             <View style={styles.row}>
                 {urls.map((item, index) => {
@@ -228,7 +244,7 @@ const Scripts = () => {
             <Line />
             <Line />
             <Line />
-            </View>
+          </View>
         </ScrollView>
     );
 };
