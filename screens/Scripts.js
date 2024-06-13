@@ -5,10 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 import { ScrollView } from 'react-native';
-// import * as FileSystem from 'expo-file-system';
-// import FileViewer from 'react-native-file-viewer';
-// import { Linking, Platform } from 'react-native';
-// import * as Sharing from 'expo-sharing';
+
 
 
 import{
@@ -32,8 +29,6 @@ const Scripts = () => {
   const [shivaUrls, setShivaUrls] = useState([]);
   const [muruUrls, setMuruUrls] = useState([]);
   const [hanuUrls, setHanuUrls] = useState([]);
-  const downloadedFiles = {};
-  const [selectedPdfUri, setSelectedPdfUri] = useState(null);
 
 
 
