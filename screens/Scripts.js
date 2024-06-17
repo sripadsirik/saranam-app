@@ -103,15 +103,8 @@ const Scripts = () => {
     useUrls();
   }, []);
 
-  // const openPDF = async (url) => {
-  //   await WebBrowser.openBrowserAsync(url);
-  // };
   const openPDF = async (url) => {
-    try {
-      await WebBrowser.openBrowserAsync(url);
-    } catch (error) {
-      console.error(`Failed to open file: ${url}`, error);
-    }
+    await WebBrowser.openBrowserAsync(url);
   };
 
   
