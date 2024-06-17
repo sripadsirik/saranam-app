@@ -110,7 +110,7 @@ const Schedule = () => {
                                 console.log(values);
 
                                 const dateParts = values.Day.split("-");
-                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));                             
+                                const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0));                             
 
                                 const appointmentData = {
                                     fullName: values.fullName, // the full name
@@ -181,7 +181,7 @@ const Schedule = () => {
                     >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
                         
 
-                        {show && (
+                        {/* {show && (
                             <DateTimePickerModal
                                 isVisible={isDatePickerVisible}
                                 mode="date"
@@ -189,7 +189,7 @@ const Schedule = () => {
                                 onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
                                 onCancel={hideDatePicker}
                             />
-                        )}
+                        )} */}
                     
                         <MyTextInput 
                             label="Full Name"
