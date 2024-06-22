@@ -10,8 +10,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRef } from 'react';
 import { Audio } from 'expo-av';
 import { Button } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
-
 
 
 import{
@@ -124,21 +122,26 @@ const Welcome = ({navigation}) => {
         <StyledContainer>
         <StatusBar style="dark" />
             <InnerContainer>
+                
 
+                
                 <WelcomeContainer> 
-                    <PageTitle welcome={true}>Welcome Swamy</PageTitle>
-                    <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
-                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
-                <StyledFormArea>
-                    <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
-
-                    <Line />
+                  
                     <StyledButton onPress={handleSignOut}>
                         <ButtonText>
                             Logout
                         </ButtonText>
                     </StyledButton>
-                </StyledFormArea>
+                  
+                <Line />
+                    <PageTitle welcome={true}>Welcome Swamy</PageTitle>
+                    <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
+                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
+                    <StyledFormArea>
+                        <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
+
+                        <Line />
+                    </StyledFormArea>
                 </WelcomeContainer>
 
             </InnerContainer>
@@ -147,5 +150,14 @@ const Welcome = ({navigation}) => {
         
     );
 };
+
+const styles = StyleSheet.create({
+  logoutButtonContainer: {
+    position: 'relative',
+    right: 10, // Adjust based on your needs
+    top: 1000, // Adjust based on your needs
+    zIndex: 1, // Ensure it's above other elements if needed
+  },
+});
 
 export default Welcome;
