@@ -64,6 +64,9 @@ const Booking = () => {
         }
     };
 
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(`The current timezone is ${timeZone}.`);
+
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -82,11 +85,12 @@ const Booking = () => {
                                 <Text></Text>
                                 <Text style={styles.itemText}>Pooja Type: {appointment.name}</Text>
                                 <Text></Text>
-                                <Text style={styles.itemText}>Your message: {appointment.note}</Text>
+                                <Text style={styles.itemText}>Address: {appointment.address}</Text>
                                 <Text></Text>
-                                <Text style={styles.itemText}>Day: {appointment.Day.toDate().toDateString()}</Text>
+                                <Text style={styles.itemText}>Day: {appointment.Day.toDate().toLocaleDateString('en-US', { timeZone: timeZone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+                                {/* <Text style={styles.itemText}>Day: {appointment.Day.toDate().toLocaleDateString('en-US', { timeZone: 'America/Chicago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Text> */}
                                 <Text></Text>
-                                <Text style={styles.itemText}>Trying to fix^: {appointment.day}</Text>
+                                <Text style={styles.itemText}>Date Scheduled: {appointment.day}</Text>
                                 <Text></Text>
                                 <TouchableOpacity onPress={() => handleDelete(index)}>
                                     <Icon name="trash" size={30} color="#900" />

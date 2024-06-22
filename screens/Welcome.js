@@ -10,7 +10,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRef } from 'react';
 import { Audio } from 'expo-av';
 import { Button } from 'react-native';
-import { StyleSheet } from 'react-native';
 
 
 import{
@@ -90,12 +89,23 @@ const Welcome = ({navigation}) => {
         return unsubscribe;
       }, []);
 
-    const handleSignOut = async () => {
+      const handleSignOut = async () => {
         try {
             await signOut(auth);
+            toggleSound(); // Add this line to stop the music
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
-            navigation.navigate('Login');
+    
+            // Reset the navigation stack
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  { name: 'Login' },
+                ],
+              })
+            );
+    
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                   console.log('User is signed in');
@@ -106,7 +116,7 @@ const Welcome = ({navigation}) => {
         } catch (error) {
             console.error('Error signing out:', error); // Log the error
         }
-    }
+      }
 
     return(
         <StyledContainer>
