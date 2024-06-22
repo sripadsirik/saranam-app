@@ -141,13 +141,5 @@ const Welcome = ({navigation}) => {
     );
 };
 
-const styles = StyleSheet.create({
-  logoutButtonContainer: {
-    position: 'relative',
-    right: 10, // Adjust based on your needs
-    top: 1000, // Adjust based on your needs
-    zIndex: 1, // Ensure it's above other elements if needed
-  },
-});
 
 export default Welcome;
