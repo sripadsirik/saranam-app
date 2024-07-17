@@ -151,6 +151,7 @@ export const ButtonText = styled.Text`
 export const MsgBox = styled.Text`
     text-align: center;
     font-size: 15px;
+    margin-bottom: 0px;
 `;
 
 export const Line = styled.View`
