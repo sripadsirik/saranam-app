@@ -6,6 +6,8 @@ import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 import { ScrollView } from 'react-native';
 
+
+
 import{
     StyledContainer,
     InnerContainer,
@@ -27,6 +29,8 @@ const Scripts = () => {
   const [shivaUrls, setShivaUrls] = useState([]);
   const [muruUrls, setMuruUrls] = useState([]);
   const [hanuUrls, setHanuUrls] = useState([]);
+
+
 
 
   useEffect(() => {
@@ -106,7 +110,7 @@ const Scripts = () => {
   
     return (
         <ScrollView>
-            <View style={styles.container}>
+          <View style={styles.container}>
             <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
             <View style={styles.row}>
                 {urls.map((item, index) => {
@@ -228,7 +232,7 @@ const Scripts = () => {
             <Line />
             <Line />
             <Line />
-            </View>
+          </View>
         </ScrollView>
     );
 };

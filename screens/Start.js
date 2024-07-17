@@ -23,41 +23,41 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const {brand, darkLight, primary} = Colors;
 
 const Start = ({navigation}) => {
-    const sound = useRef(new Audio.Sound());
-  const [isPlaying, setIsPlaying] = useState(true);
+  //   const sound = useRef(new Audio.Sound());
+  // const [isPlaying, setIsPlaying] = useState(true);
 
-  const toggleSound = async () => {
-    if (isPlaying) {
-      await sound.current.stopAsync();
-    } else {
-      await sound.current.setPositionAsync(6000);
-      await sound.current.playAsync();
-    }
-    setIsPlaying(!isPlaying);
-  };
+  // const toggleSound = async () => {
+  //   if (isPlaying) {
+  //     await sound.current.stopAsync();
+  //   } else {
+  //     await sound.current.setPositionAsync(6000);
+  //     await sound.current.playAsync();
+  //   }
+  //   setIsPlaying(!isPlaying);
+  // };
 
-  useEffect(() => {
-    const loadSound = async () => {
-      try {
-        await sound.current.loadAsync(
-          require('../assets/saranam.mp3'),
-          { isLooping: true },
-        );
-        await sound.current.setPositionAsync(6000);
-        if (isPlaying) {
-          await sound.current.playAsync();
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    loadSound();
+  // useEffect(() => {
+  //   const loadSound = async () => {
+  //     try {
+  //       await sound.current.loadAsync(
+  //         require('../assets/saranam.mp3'),
+  //         { isLooping: true },
+  //       );
+  //       await sound.current.setPositionAsync(6000);
+  //       if (isPlaying) {
+  //         await sound.current.playAsync();
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   loadSound();
 
-    // Unload sound when component unmounts
-    return () => {
-      sound.current.unloadAsync();
-    };
-  }, []);
+  //   // Unload sound when component unmounts
+  //   return () => {
+  //     sound.current.unloadAsync();
+  //   };
+  // }, []);
 
     return(
         <KeyboardAvoidingWrapper>
@@ -68,13 +68,13 @@ const Start = ({navigation}) => {
 
                     <SubTitle> Swamy Saranam </SubTitle>
                     <StatusBar style="dark" />
-                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
+                    {/* <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} /> */}
                     <Text> </Text>
 
                     <Text> If you haven't signed up to be a swamy yet, please do so below: </Text>
                     <Button
                         title="Swamy Signup"
-                        onPress={() => Linking.openURL('https://www.example.com')}
+                        onPress={() => Linking.openURL('https://forms.gle/gwPA3cZa1P6yAtCq7')}
                     />
                     <Line></Line>
                     <Text>

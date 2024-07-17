@@ -60,7 +60,7 @@ export const WelcomeImage = styled.Image`
 `;
 
 export const PageTitle = styled.Text`
-    margin-top: 100px;
+    margin-top: 70px;
     font-size: 30px;
     text-align: center;
     font-weight: bold;
@@ -73,7 +73,7 @@ export const PageTitle = styled.Text`
 `;
 
 export const SubTitle = styled.Text`
-    font-size: 18px;
+    font-size: 21px;
     margin-bottom: 20px;
     margin-top: 20px;
     letter-spacing: 1px;
@@ -150,7 +150,8 @@ export const ButtonText = styled.Text`
 
 export const MsgBox = styled.Text`
     text-align: center;
-    font-size: 13px;
+    font-size: 15px;
+    margin-bottom: 0px;
 `;
 
 export const Line = styled.View`

@@ -89,12 +89,23 @@ const Welcome = ({navigation}) => {
         return unsubscribe;
       }, []);
 
-    const handleSignOut = async () => {
+      const handleSignOut = async () => {
         try {
             await signOut(auth);
+            toggleSound(); // Add this line to stop the music
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
-            navigation.navigate('Login');
+    
+            // Reset the navigation stack
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  { name: 'Login' },
+                ],
+              })
+            );
+    
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                   console.log('User is signed in');
@@ -105,27 +116,32 @@ const Welcome = ({navigation}) => {
         } catch (error) {
             console.error('Error signing out:', error); // Log the error
         }
-    }
+      }
 
     return(
         <StyledContainer>
         <StatusBar style="dark" />
             <InnerContainer>
+                
 
+                
                 <WelcomeContainer> 
-                    <PageTitle welcome={true}>Welcome Swamy</PageTitle>
-                    <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
-                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
-                <StyledFormArea>
-                    <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
-
-                    <Line />
+                  
                     <StyledButton onPress={handleSignOut}>
                         <ButtonText>
                             Logout
                         </ButtonText>
                     </StyledButton>
-                </StyledFormArea>
+                  
+                <Line />
+                    <PageTitle welcome={true}>Welcome Swamy</PageTitle>
+                    <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
+                    <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
+                    <StyledFormArea>
+                        <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
+
+                        <Line />
+                    </StyledFormArea>
                 </WelcomeContainer>
 
             </InnerContainer>
@@ -134,5 +150,6 @@ const Welcome = ({navigation}) => {
         
     );
 };
+
 
 export default Welcome;
