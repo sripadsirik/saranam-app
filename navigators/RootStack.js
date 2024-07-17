@@ -71,7 +71,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen options={{headerShown: false}} name="Bookings" component={Bookings} />
       <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
       <Tab.Screen options={{headerShown: false}} name="Songs" component={Scripts} />
-      <Tab.Screen /*options={{headerShown: false}}*/ name="About Us" component={About} />
+      <Tab.Screen options={{headerShown: false}} name="About Us" component={About} />
     </Tab.Navigator>
   );
 };

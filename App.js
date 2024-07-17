@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BackHandler } from 'react-native';
 import './firebase.js';
-
+// import 'expo-dev-client';
 import RootStack from './navigators/RootStack'
 
 export default function App() {
@@ -18,4 +18,3 @@ export default function App() {
   return <RootStack />
 }
 
-// test

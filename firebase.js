@@ -55,10 +55,143 @@ async function fetchUrls() {
   return urls;
 }
 
+async function fetchGaneshaUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Ganesha'); // Changed to Ganesha
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchSaiUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Sai Baba');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchDeviUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Devi');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchVishnuUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Vishnu');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchShivaUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Shiva');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchMuruUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Murugan');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
+async function fetchHanuUrls() {
+  const storage = getStorage();
+  const storageRef = ref(storage, '/Songs/Hanuman');
+
+  // Fetch the list of files in the directory
+  const res = await listAll(storageRef);
+
+  // Fetch the download URL for each file
+  const urls = await Promise.all(res.items.map(async (item) => {
+    const url = await getDownloadURL(item);
+    return {
+      name: item.name,
+      url: url,
+    };
+  }));
+
+  return urls;
+}
+
 initializeFirebaseAuth();
 
 //const analytics = getAnalytics(app);
 
 const db = getFirestore(app);
 
-export { auth, db, fetchUrls };
+export { auth, db, fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls, fetchHanuUrls };

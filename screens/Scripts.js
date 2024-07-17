@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { fetchUrls } from '../firebase.js';
+import { fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls, fetchHanuUrls } from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 import { ScrollView } from 'react-native';
+
+
 
 import{
     StyledContainer,
@@ -20,6 +22,16 @@ import { MsgBox, ItemBox } from '../components/styles';
 
 const Scripts = () => {
   const [urls, setUrls] = useState([]);
+  const [ganeshaUrls, setGaneshaUrls] = useState([]);
+  const [saiUrls, setSaiUrls] = useState([]);
+  const [deviUrls, setDeviUrls] = useState([]);
+  const [vishnuUrls, setVishnuUrls] = useState([]);
+  const [shivaUrls, setShivaUrls] = useState([]);
+  const [muruUrls, setMuruUrls] = useState([]);
+  const [hanuUrls, setHanuUrls] = useState([]);
+
+
+
 
   useEffect(() => {
     async function useUrls() {
@@ -27,6 +39,62 @@ const Scripts = () => {
           const urls = await fetchUrls();
           console.log(urls);
           setUrls(urls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const ganeshaUrls = await fetchGaneshaUrls();
+          console.log(ganeshaUrls);
+          setGaneshaUrls(ganeshaUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const saiUrls = await fetchSaiUrls();
+          console.log(saiUrls);
+          setSaiUrls(saiUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const deviUrls = await fetchDeviUrls();
+          console.log(deviUrls);
+          setDeviUrls(deviUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const vishnuUrls = await fetchVishnuUrls();
+          console.log(vishnuUrls);
+          setVishnuUrls(vishnuUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const shivaUrls = await fetchShivaUrls();
+          console.log(shivaUrls);
+          setShivaUrls(shivaUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const muruUrls = await fetchMuruUrls();
+          console.log(muruUrls);
+          setMuruUrls(muruUrls);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const hanuUrls = await fetchHanuUrls();
+          console.log(hanuUrls);
+          setHanuUrls(hanuUrls);
         } catch (error) {
           console.error(error);
         }
@@ -42,17 +110,17 @@ const Scripts = () => {
   
     return (
         <ScrollView>
-            <View style={styles.container}>
+          <View style={styles.container}>
             <SubTitle style={styles.text1}>Ayappa Songs Lyrics</SubTitle>
             <View style={styles.row}>
                 {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                return (
-                    <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                    <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                    </TouchableOpacity>
-                );
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -60,14 +128,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Ganesha Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
+                {ganeshaUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
         
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                  return (
+                    <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                    </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -75,14 +143,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Saibaba Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {saiUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -90,14 +158,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Devi Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {deviUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -105,14 +173,14 @@ const Scripts = () => {
             
             <SubTitle style={styles.text1}>Vishnu Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {vishnuUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -120,14 +188,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Shiva Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {shivaUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -135,14 +203,14 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Murugan Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {muruUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
@@ -150,21 +218,21 @@ const Scripts = () => {
 
             <SubTitle style={styles.text1}>Hanuman Songs Lyrics</SubTitle>
             <View style={styles.row}>
-                {urls.map((item, index) => {
-                const nameWithoutExtension = item.name.replace('.pdf', '');
-        
-                // return (
-                //     <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
-                //     <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
-                //     </TouchableOpacity>
-                // );
+                {hanuUrls.map((item, index) => {
+                  const nameWithoutExtension = item.name.replace('.pdf', '');
+          
+                  return (
+                      <TouchableOpacity key={index} style={styles.box} onPress={() => openPDF(item.url)}>
+                      <MsgBox style={styles.text}>{nameWithoutExtension}</MsgBox>
+                      </TouchableOpacity>
+                  );
                 })}
             </View>
             <Line />
             <Line />
             <Line />
             <Line />
-            </View>
+          </View>
         </ScrollView>
     );
 };
@@ -180,14 +248,6 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
       justifyContent: 'space-between',
     },
-    // box: {
-    //   width: '30%',
-    //   height: 100,
-    //   margin: 5,
-    //   backgroundColor: '#ddd',
-    //   justifyContent: 'center',
-    //   alignItems: 'center',
-    // },
     box: {
         width: '28%',
         height: 100,
