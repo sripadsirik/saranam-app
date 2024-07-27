@@ -23,7 +23,7 @@ import {
 } from '../components/stylesw';
 import { MsgBox, ItemBox } from '../components/styles';
 
-const Booking = () => {
+const Booking = ({navigation}) => {
     const [appointments, setAppointments] = useState([]);
     const db = getFirestore();
     const auth = getAuth();
@@ -57,6 +57,7 @@ const Booking = () => {
             await deleteDoc(doc(db, 'appointments', appointmentId));
             console.log("Document successfully deleted!");
             Alert.alert('NICE', 'Arrangement deleted successfully!');
+            navigation.navigate('Schedule');
             // Here you might want to remove the deleted appointment from your local state as well
         } catch (error) {
             console.error("Error removing document: ", error);
