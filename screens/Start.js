@@ -14,8 +14,10 @@ import{
     SubTitle,
     Colors,
     Line,
+    TextLink,
+    TextLinkContent,
     StyledButton,
-    ButtonText,
+    ButtonText
 }from './../components/stylesl';
 
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
@@ -82,13 +84,13 @@ const Start = ({navigation}) => {
                         Next to use the app, either signup or login:
                     </Text>
                     <Text> </Text>
-                    <StyledButton onPress={() => navigation.navigate('Signup')}>
-                        <ButtonText> Signup </ButtonText>
-                    </StyledButton>
+                    <TextLink onPress={() => navigation.navigate('Signup')}>
+                        <TextLinkContent> Signup </TextLinkContent>
+                    </TextLink>
                     <Text> </Text>
-                    <StyledButton onPress={() => navigation.navigate('Login')}>
-                        <ButtonText> Login </ButtonText>
-                    </StyledButton>
+                    <TextLink onPress={() => navigation.navigate('Login')}>
+                        <TextLinkContent> Login </TextLinkContent>
+                    </TextLink>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
