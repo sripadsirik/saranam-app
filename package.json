@@ -22,6 +22,7 @@
     "@react-navigation/stack": "^6.3.29",
     "android": "^0.0.8",
     "datetimepicker": "^0.1.39",
+    "eas": "^0.1.0",
     "expo": "^51.0.21",
     "expo-av": "^14.0.6",
     "expo-constants": "~16.0.1",

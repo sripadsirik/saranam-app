@@ -10,6 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRef } from 'react';
 import { Audio } from 'expo-av';
 import { Button } from 'react-native';
+import { CommonActions } from '@react-navigation/native';
 
 
 import{
