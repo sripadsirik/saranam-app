@@ -13,6 +13,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios":{
+        "appleId": "sripadsirik@gmail.com",
+        "ascAppId": "6621188415",
+        "appleTeamId": "F58QT4N5QJ"
+      }
+    }
   }
 }
