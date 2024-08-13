@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import { Octicons, Ionicons, Fontisto } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
@@ -295,6 +295,23 @@ const Schedule = () => {
                         <Line />
                     </StyledFormArea>)}
                     </Formik>
+                    <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text><Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text><Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text><Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
+            <Text> </Text>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
