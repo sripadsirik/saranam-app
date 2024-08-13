@@ -15,7 +15,9 @@ import{
     Colors,
     Line,
     TextLink,
-    TextLinkContent
+    TextLinkContent,
+    StyledButton,
+    ButtonText
 }from './../components/stylesl';
 
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
@@ -72,10 +74,11 @@ const Start = ({navigation}) => {
                     <Text> </Text>
 
                     <Text> If you haven't signed up to be a swamy yet, please do so below: </Text>
-                    <Button
-                        title="Swamy Signup"
-                        onPress={() => Linking.openURL('https://forms.gle/gwPA3cZa1P6yAtCq7')}
-                    />
+                    <StyledButton onPress={() => Linking.openURL('https://forms.gle/gwPA3cZa1P6yAtCq7')} >
+                        <ButtonText>
+                            Signup to be a Swamy
+                        </ButtonText>
+                    </StyledButton>
                     <Line></Line>
                     <Text>
                         Next to use the app, either signup or login:

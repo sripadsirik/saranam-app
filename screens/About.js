@@ -141,7 +141,7 @@ Lord Ayyappa afterwards
                     <SubTitle> We look forward to your participation in all of these events. Besides these events,
                     SARANAM YATRA also participates in other events for the community. “TATWAMASI" </SubTitle>
 
-                    <MsgBox style={msgBoxStyles.container}>Contact: saranamyatrachicago@gmail.com</MsgBox>
+                    <MsgBox style={msgBoxStyles.container}>Contact: {"\n"} saranamyatrachicago@gmail.com</MsgBox>
 
                     <PageTitle> Thank You </PageTitle>
                     <Line style={{ marginTop: 200 }} />
