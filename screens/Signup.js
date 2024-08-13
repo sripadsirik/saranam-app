@@ -138,7 +138,7 @@ const Signup = ({navigation}) => {
                         </ButtonText>
                     </StyledButton>
                     <Line />
-                    <Text> To login with Google, navigate to Login </Text>
+                    {/* <Text> To login with Google, navigate to Login </Text> */}
                     <ExtraView>
                         <ExtraText>
                             Already Have an Account?

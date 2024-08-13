@@ -45,6 +45,12 @@ const Login = ({}) => {
         return re.test(String(email).toLowerCase());
     }
 
+    const newLocal = <StyledButton google={true}>
+        <Fontisto name="google" color={primary} size={25} />
+        <ButtonText google={true}>
+            Sign in with Google
+        </ButtonText>
+    </StyledButton>;
     return(
         <KeyboardAvoidingWrapper>
             <StyledContainer>
@@ -105,12 +111,7 @@ const Login = ({}) => {
                             </ButtonText>
                         </StyledButton>
                         <Line />
-                        <StyledButton google={true} >
-                                <Fontisto name="google" color={primary} size={25} />
-                            <ButtonText google={true}>
-                                Sign in with Google
-                            </ButtonText>
-                        </StyledButton>
+                        {/* {newLocal} */}
                         <ExtraView>
                             <ExtraText>
                                 Don't Have an Account already?

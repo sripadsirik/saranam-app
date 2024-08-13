@@ -1,34 +1,24 @@
 {
+  "cli": {
+    "version": ">= 9.1.0"
+  },
   "build": {
     "development": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "simulator": true
-      }
+      "developmentClient": true,
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "simulator": true
-      }
+      "distribution": "internal"
     },
-    "production": {
-      "distribution": "store",
-      "android": {
-        "buildType": "app-bundle"
-      },
-      "ios": {
-        "simulator": false
-      }
-    }
+    "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios":{
+        "appleId": "sripadsirik@gmail.com",
+        "ascAppId": "6621188415",
+        "appleTeamId": "F58QT4N5QJ"
+      }
+    }
   }
 }
