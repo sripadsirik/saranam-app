@@ -39,8 +39,9 @@ const Welcome = ({ navigation }) => {
     const [selectedFamily, setSelectedFamily] = useState(null);
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [pickerValue, setPickerValue] = useState('');
-    const [isMatha, setIsMatha] = useState(false);  // State for Matha confirmation
-    const [showMathaForm, setShowMathaForm] = useState(true);  // Control visibility of Matha confirmation form
+    const [isMatha, setIsMatha] = useState(false);
+    const [showMathaForm, setShowMathaForm] = useState(true);
+    const [hasSelectedMathaOption, setHasSelectedMathaOption] = useState(false);  
     const formikRef = useRef();
 
     const toggleSound = async () => {
@@ -90,6 +91,14 @@ const Welcome = ({ navigation }) => {
                 if (!familySnapshot.empty) {
                     const familyDoc = familySnapshot.docs[0];
                     setFamilyName(familyDoc.id);
+
+                    // Check if the user is already confirmed as Matha
+                    const familyData = familyDoc.data();
+                    if (familyData.matha === extractedUsername) {
+                        setIsMatha(true);
+                        setHasSelectedMathaOption(true);
+                        setShowMathaForm(false);  // Hide the Matha form since the user is already confirmed
+                    }
                 } else {
                     setFamilyName(null);
                 }
@@ -133,22 +142,18 @@ const Welcome = ({ navigation }) => {
     const handleMathaConfirmation = async () => {
         try {
             if (familyName) {
-                // Reference to the family document
                 const familyDocRef = doc(db, "families", familyName);
-                
-                // Fetch the current family document
                 const familyDoc = await getDoc(familyDocRef);
                 
                 if (familyDoc.exists()) {
-                    // Update the family document to set the user as a matha
                     await setDoc(familyDocRef, {
-                        matha: userEmail  // Add the matha field with the user's email
+                        matha: userEmail
                     }, { merge: true });
     
-                    // Update the state to reflect the matha status
                     setIsMatha(true);
+                    setShowMathaForm(false);
+                    setHasSelectedMathaOption(true);
                     Alert.alert("Matha Confirmed", "You are confirmed as Matha of the family!");
-                    navigation.navigate("MathaTabs"); // Navigate to the Matha welcome screen with tabs
                 } else {
                     Alert.alert("Error", "Family document does not exist.");
                 }
@@ -161,15 +166,14 @@ const Welcome = ({ navigation }) => {
         }
     };
     
-
     const fetchFamilies = async () => {
         try {
             const familyCollection = collection(db, "families");
             const familySnapshot = await getDocs(familyCollection);
             const familyList = familySnapshot.docs.map(doc => ({ label: doc.id, value: doc.id }));
             setFamilies(familyList);
-            setPickerValue(''); // Reset picker value
-            setPickerVisible(true); // Show picker modal
+            setPickerValue('');
+            setPickerVisible(true);
         } catch (error) {
             console.error("Error fetching families: ", error);
             Alert.alert("Error", "There was an error fetching families. Please try again.");
@@ -218,7 +222,7 @@ const Welcome = ({ navigation }) => {
 
                     Alert.alert("Family Joined", `Successfully joined the family: ${pickerValue}`);
                     setFamilyName(pickerValue);
-                    setPickerVisible(false); // Hide picker modal
+                    setPickerVisible(false);
                 } else {
                     Alert.alert("Error", "Family does not exist.");
                 }
@@ -240,17 +244,23 @@ const Welcome = ({ navigation }) => {
                 setIsHeadOfFamily(false);
                 setIsChoosingFamily(false);
                 setSelectedFamily(null);
-                setIsMatha(false);  // Reset Matha state
-                setShowMathaForm(true);  // Reset the visibility of the Matha confirmation form
-                formikRef.current.resetForm();
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+                if (formikRef.current) {
+                    formikRef.current.resetForm();
+                }
             } else {
                 Alert.alert("No Family", "You are not currently in a family.");
                 setIsHeadOfFamily(false);
                 setIsChoosingFamily(false);
                 setSelectedFamily(null);
-                setIsMatha(false);  // Reset Matha state
-                setShowMathaForm(true);  // Reset the visibility of the Matha confirmation form
-                formikRef.current.resetForm();
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+                if (formikRef.current) {
+                    formikRef.current.resetForm();
+                }
             }
         } catch (error) {
             console.error("Error resetting family: ", error);
@@ -259,21 +269,20 @@ const Welcome = ({ navigation }) => {
 
     const handleNoMatha = () => {
         setShowMathaForm(false);
+        setHasSelectedMathaOption(true);  // Mark that a selection has been made
     };
 
     const handleChangeMathaConfirmation = async () => {
         try {
             if (familyName) {
-                // Reference to the family document
                 const familyDocRef = doc(db, "families", familyName);
-                
-                // Delete the Matha field from the family document
                 await updateDoc(familyDocRef, {
                     matha: null
                 });
 
                 setIsMatha(false);
-                setShowMathaForm(true); // Show the Matha confirmation form again
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
             } else {
                 Alert.alert("Error", "No family found to update.");
             }
@@ -297,15 +306,17 @@ const Welcome = ({ navigation }) => {
                         <Text> </Text>
                         <Text> </Text>
                         <WelcomeContainer>
-                            <StyledButton onPress={handleSignOut}>
+                            <StyledButton onPress={handleSignOut} style={styles.redButton}>
                                 <ButtonText>Logout</ButtonText>
                             </StyledButton>
                             <StyledButton onPress={handleResetFamily}>
                                 <ButtonText>Reset Family/Form</ButtonText>
                             </StyledButton>
-                            <StyledButton onPress={handleChangeMathaConfirmation}>
-                                <ButtonText>Change Matha Confirmation</ButtonText>
-                            </StyledButton>
+                            {hasSelectedMathaOption && (
+                                <StyledButton onPress={handleChangeMathaConfirmation}>
+                                    <ButtonText>Change Matha Confirmation</ButtonText>
+                                </StyledButton>
+                            )}
                             <Line />
                             <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
                             <PageTitle welcome={true}>Welcome Swamy</PageTitle>
@@ -355,13 +366,21 @@ const Welcome = ({ navigation }) => {
                                 {familyName && !isMatha && showMathaForm && (
                                     <View>
                                         <Text>Are you a Matha of the family?</Text>
-                                        <Button title="Yes" onPress={handleMathaConfirmation} />
+                                        <Button title="Yes" onPress={() => {
+                                            handleMathaConfirmation();
+                                            setHasSelectedMathaOption(true);  // Mark that a selection has been made
+                                        }} />
                                         <Button title="No" onPress={handleNoMatha} />
                                     </View>
                                 )}
 
                                 {isMatha && (
-                                    <Text>You are confirmed as Matha of the family!</Text>
+                                    <>
+                                        <Text>You are confirmed as Matha of the family!</Text>
+                                        <StyledButton onPress={() => navigation.navigate("MathaTabs")}>
+                                            <ButtonText>Click to Matha Screens to Select Food</ButtonText>
+                                        </StyledButton>
+                                    </>
                                 )}
                             </StyledFormArea>
                         </WelcomeContainer>
@@ -398,7 +417,6 @@ const Welcome = ({ navigation }) => {
                 </View>
             </Modal>
             <FlashMessage position="top" />
-            
         </KeyboardAvoidingView>
     );
 };
@@ -431,6 +449,9 @@ const styles = StyleSheet.create({
     picker: {
         height: 200,
         width: '100%',
+    },
+    redButton: {
+        backgroundColor: 'red',
     },
 });
 

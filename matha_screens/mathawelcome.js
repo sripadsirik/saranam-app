@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const mathawelcome = () => {
+const Mathawelcome = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Welcome to the Matha Home Screen!</Text>
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default mathawelcome;
+export default Mathawelcome;
