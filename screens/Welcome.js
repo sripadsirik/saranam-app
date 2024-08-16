@@ -9,8 +9,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { Audio } from 'expo-av';
 import { CommonActions } from '@react-navigation/native';
-import { getFirestore, collection, where, getDocs, doc, setDoc, deleteDoc, query, getDoc } from "firebase/firestore";
-import mathawelcome from '../matha screens/mathawelcome';
+import { getFirestore, collection, where, getDocs, doc, setDoc, deleteDoc, query, getDoc, updateDoc } from "firebase/firestore";
 import {
     InnerContainer,
     PageLogo,
@@ -40,7 +39,8 @@ const Welcome = ({ navigation }) => {
     const [selectedFamily, setSelectedFamily] = useState(null);
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [pickerValue, setPickerValue] = useState('');
-    const [isMatha, setIsMatha] = useState(false);
+    const [isMatha, setIsMatha] = useState(false);  // State for Matha confirmation
+    const [showMathaForm, setShowMathaForm] = useState(true);  // Control visibility of Matha confirmation form
     const formikRef = useRef();
 
     const toggleSound = async () => {
@@ -131,36 +131,37 @@ const Welcome = ({ navigation }) => {
     };
 
     const handleMathaConfirmation = async () => {
-      try {
-          if (familyName) {
-              // Reference to the family document
-              const familyDocRef = doc(db, "families", familyName);
-              
-              // Fetch the current family document
-              const familyDoc = await getDoc(familyDocRef);
-              
-              if (familyDoc.exists()) {
-                  // Update the family document to set the user as a matha
-                  await setDoc(familyDocRef, {
-                      matha: userEmail  // Add the matha field with the user's email
-                  }, { merge: true });
-  
-                  // Update the state to reflect the matha status
-                  setIsMatha(true);
-                  Alert.alert("Matha Confirmed", "You are confirmed as Matha of the family!");
-                  navigation.navigate("mathawelcome");
-              } else {
-                  Alert.alert("Error", "Family document does not exist.");
-              }
-          } else {
-              Alert.alert("Error", "No family found to update.");
-          }
-      } catch (error) {
-          console.error("Error updating family document: ", error);
-          Alert.alert("Error", "There was an error updating the family document. Please try again.");
-      }
-  };
-  
+        try {
+            if (familyName) {
+                // Reference to the family document
+                const familyDocRef = doc(db, "families", familyName);
+                
+                // Fetch the current family document
+                const familyDoc = await getDoc(familyDocRef);
+                
+                if (familyDoc.exists()) {
+                    // Update the family document to set the user as a matha
+                    await setDoc(familyDocRef, {
+                        matha: userEmail  // Add the matha field with the user's email
+                    }, { merge: true });
+    
+                    // Update the state to reflect the matha status
+                    setIsMatha(true);
+                    Alert.alert("Matha Confirmed", "You are confirmed as Matha of the family!");
+                    navigation.navigate("MathaTabs"); // Navigate to the Matha welcome screen with tabs
+                } else {
+                    Alert.alert("Error", "Family document does not exist.");
+                }
+            } else {
+                Alert.alert("Error", "No family found to update.");
+            }
+        } catch (error) {
+            console.error("Error updating family document: ", error);
+            Alert.alert("Error", "There was an error updating the family document. Please try again.");
+        }
+    };
+    
+
     const fetchFamilies = async () => {
         try {
             const familyCollection = collection(db, "families");
@@ -233,22 +234,52 @@ const Welcome = ({ navigation }) => {
             if (familyName) {
                 const familyDocRef = doc(db, "families", familyName);
                 await deleteDoc(familyDocRef);
-
+    
                 Alert.alert("Family Reset", `Family '${familyName}' has been deleted.`);
                 setFamilyName(null);
                 setIsHeadOfFamily(false);
                 setIsChoosingFamily(false);
                 setSelectedFamily(null);
+                setIsMatha(false);  // Reset Matha state
+                setShowMathaForm(true);  // Reset the visibility of the Matha confirmation form
                 formikRef.current.resetForm();
             } else {
                 Alert.alert("No Family", "You are not currently in a family.");
                 setIsHeadOfFamily(false);
                 setIsChoosingFamily(false);
                 setSelectedFamily(null);
+                setIsMatha(false);  // Reset Matha state
+                setShowMathaForm(true);  // Reset the visibility of the Matha confirmation form
                 formikRef.current.resetForm();
             }
         } catch (error) {
             console.error("Error resetting family: ", error);
+        }
+    };
+
+    const handleNoMatha = () => {
+        setShowMathaForm(false);
+    };
+
+    const handleChangeMathaConfirmation = async () => {
+        try {
+            if (familyName) {
+                // Reference to the family document
+                const familyDocRef = doc(db, "families", familyName);
+                
+                // Delete the Matha field from the family document
+                await updateDoc(familyDocRef, {
+                    matha: null
+                });
+
+                setIsMatha(false);
+                setShowMathaForm(true); // Show the Matha confirmation form again
+            } else {
+                Alert.alert("Error", "No family found to update.");
+            }
+        } catch (error) {
+            console.error("Error removing Matha field: ", error);
+            Alert.alert("Error", "There was an error removing the Matha field. Please try again.");
         }
     };
 
@@ -272,6 +303,9 @@ const Welcome = ({ navigation }) => {
                             <StyledButton onPress={handleResetFamily}>
                                 <ButtonText>Reset Family/Form</ButtonText>
                             </StyledButton>
+                            <StyledButton onPress={handleChangeMathaConfirmation}>
+                                <ButtonText>Change Matha Confirmation</ButtonText>
+                            </StyledButton>
                             <Line />
                             <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
                             <PageTitle welcome={true}>Welcome Swamy</PageTitle>
@@ -282,27 +316,25 @@ const Welcome = ({ navigation }) => {
                             <StyledFormArea>
                                 <Avatar resizeMode="cover" source={require('../assets/img1.webp')} />
                                 <Line />
-                                {!familyName && !isHeadOfFamily && !isMatha && (
+                                {!familyName && !isHeadOfFamily && (
                                     <View>
                                         <Text>Are you the head Swami of the family?</Text>
                                         <Button title="Yes" onPress={handleHeadOfFamilyConfirmation} />
                                         <Text> </Text>
-                                        <Button title="No" onPress={() => setIsChoosingFamily(true)} />
+                                        <Button title="No" onPress={fetchFamilies} />
                                     </View>
                                 )}
-
-                                {isHeadOfFamily && (
+                                {isHeadOfFamily && !familyName && (
                                     <Formik
+                                        innerRef={formikRef}
                                         initialValues={{ fullName: '' }}
                                         validationSchema={validationSchema}
-                                        innerRef={formikRef}
                                         onSubmit={handleCreateFamily}
                                     >
                                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                                             <View>
-                                                <Text> </Text>
                                                 <TextInput
-                                                    placeholder="Enter Family Name"
+                                                    placeholder="Family Name"
                                                     onChangeText={handleChange('fullName')}
                                                     onBlur={handleBlur('fullName')}
                                                     value={values.fullName}
@@ -311,49 +343,20 @@ const Welcome = ({ navigation }) => {
                                                 {errors.fullName && touched.fullName && (
                                                     <Text style={styles.errorText}>{errors.fullName}</Text>
                                                 )}
-                                                <Button title="Submit" onPress={handleSubmit} />
+                                                <StyledButton onPress={handleSubmit}>
+                                                    <ButtonText>Create Family</ButtonText>
+                                                </StyledButton>
                                             </View>
                                         )}
                                     </Formik>
                                 )}
 
-                                {isChoosingFamily && !isHeadOfFamily && (
-                                    <View>
-                                        <Button title="Select Existing Family" onPress={fetchFamilies} />
-                                    </View>
-                                )}
-
-                                
-                                <Modal
-                                                visible={isPickerVisible}
-                                                transparent={true}
-                                                animationType="slide"
-                                                onRequestClose={() => setPickerVisible(false)}
-                                            >
-                                                <View style={styles.modalContainer}>
-                                                    <View style={styles.modalContent}>
-                                                        <Text>Select a Family</Text>
-                                                        <Picker
-                                                            selectedValue={pickerValue}
-                                                            onValueChange={(itemValue) => setPickerValue(itemValue)}
-                                                            style={styles.picker}
-                                                        >
-                                                            <Picker.Item label="Select a family" value="" />
-                                                            {families.map(family => (
-                                                                <Picker.Item key={family.value} label={family.label} value={family.value} />
-                                                            ))}
-                                                        </Picker>
-                                                        <Button title="Join Family" onPress={handleJoinFamily} />
-                                                        <Button title="Cancel" onPress={() => setPickerVisible(false)} />
-                                                    </View>
-                                                </View>
-                                            </Modal>
-
-                                {familyName && !isMatha && (
+                                {/* Matha Confirmation */}
+                                {familyName && !isMatha && showMathaForm && (
                                     <View>
                                         <Text>Are you a Matha of the family?</Text>
                                         <Button title="Yes" onPress={handleMathaConfirmation} />
-                                        <Button title="No" onPress={() => {}} />
+                                        <Button title="No" onPress={handleNoMatha} />
                                     </View>
                                 )}
 
@@ -366,10 +369,36 @@ const Welcome = ({ navigation }) => {
                         <Text> </Text>
                         <Text> </Text>
                         <Text> </Text>
-                        <Text> </Text>
                     </InnerContainer>
                 </StyledContainer>
             </ScrollView>
+            <Modal
+                visible={isPickerVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setPickerVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>Select a Family</Text>
+                        <Picker
+                            selectedValue={pickerValue}
+                            onValueChange={(itemValue) => setPickerValue(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select a family" value="" />
+                            {families.map(family => (
+                                <Picker.Item key={family.value} label={family.label} value={family.value} />
+                            ))}
+                        </Picker>
+                        <Button title="Join Family" onPress={handleJoinFamily} />
+                        <Text> </Text>
+                        <Button title="Cancel" onPress={() => setPickerVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
+            <FlashMessage position="top" />
+            
         </KeyboardAvoidingView>
     );
 };
@@ -379,17 +408,29 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
+        marginBottom: 12,
+        paddingHorizontal: 8,
+        borderRadius: 4
     },
     errorText: {
         color: 'red',
+        marginBottom: 12,
     },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    picker: {
+        height: 200,
+        width: '100%',
     },
 });
 

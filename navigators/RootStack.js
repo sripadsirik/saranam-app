@@ -1,4 +1,3 @@
-// RootStack.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -16,7 +15,7 @@ import About from '../screens/About';
 import Calendar from '../screens/Calendar';
 import Bookings from '../screens/Booking';
 import Start from '../screens/Start';
-
+import mathawelcome from '../matha_screens/mathawelcome';  // Import your new Matha Welcome screen
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -76,6 +75,38 @@ const BottomTabNavigator = () => {
   );
 };
 
+// Create a separate BottomTabNavigator for the Matha Welcome screen
+const MathaTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Matha Home') {
+            iconName = 'home-outline';
+          } 
+
+          return <TabIcon focused={focused} name={iconName} />;
+        },
+        tabBarActiveTintColor: brand,
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          zIndex: 0,
+        },
+      })}
+    >
+      <Tab.Screen options={{headerShown: false}} name="Matha Home" component={mathawelcome} />
+    </Tab.Navigator>
+  );
+};
+
 const RootStack = () => {
   return (
     <NavigationContainer>
@@ -97,6 +128,7 @@ const RootStack = () => {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="MathaTabs" component={MathaTabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
