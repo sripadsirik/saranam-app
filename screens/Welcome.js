@@ -1,156 +1,191 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Alert, Button, TouchableOpacity, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import {ScrollView} from "react-native";
-import { auth } from '../firebase'; // Import auth from your firebase.js file
-import { signOut } from 'firebase/auth'; // Import signOut from firebase/auth
+import { signOut, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import FlashMessage, { showMessage } from "react-native-flash-message";
-import { Alert } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useRef } from 'react';
 import { Audio } from 'expo-av';
-import { Button } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
+import { auth } from '../firebase';
+import { Icon } from 'react-native-elements';
+import Modal from 'react-native-modal';
 
-
-import{
-
+import {
     InnerContainer,
-    PageLogo,
     PageTitle,
     SubTitle,
     StyledFormArea,
-    StyledButton,
-    ButtonText,
     Line,
     WelcomeContainer,
-    WelcomeImage,
     Avatar,
     StyledContainer
-}from './../components/stylesw';
+} from './../components/stylesw';
 
-const Welcome = ({navigation}) => {
-  const sound = useRef(new Audio.Sound());
-  const [isPlaying, setIsPlaying] = useState(true);
+const Welcome = ({ navigation }) => {
+    const sound = useRef(new Audio.Sound());
+    const [isPlaying, setIsPlaying] = useState(true);
+    const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
-  const toggleSound = async () => {
-    if (isPlaying) {
-      await sound.current.stopAsync();
-    } else {
-      await sound.current.setPositionAsync(6000);
-      await sound.current.playAsync();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  useEffect(() => {
-    const loadSound = async () => {
-      try {
-        await sound.current.loadAsync(
-          require('../assets/saranam.mp3'),
-          { isLooping: true },
-        );
-        await sound.current.setPositionAsync(6000);
+    const toggleSound = async () => {
         if (isPlaying) {
-          await sound.current.playAsync();
+            await sound.current.stopAsync();
+        } else {
+            await sound.current.setPositionAsync(6000);
+            await sound.current.playAsync();
         }
-      } catch (error) {
-        console.log(error);
-      }
+        setIsPlaying(!isPlaying);
     };
-    loadSound();
 
-    // Unload sound when component unmounts
-    return () => {
-      sound.current.unloadAsync();
-    };
-  }, []);
+    useEffect(() => {
+        const loadSound = async () => {
+            try {
+                await sound.current.loadAsync(
+                    require('../assets/saranam.mp3'),
+                    { isLooping: true },
+                );
+                await sound.current.setPositionAsync(6000);
+                if (isPlaying) {
+                    await sound.current.playAsync();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        loadSound();
+
+        return () => {
+            sound.current.unloadAsync();
+        };
+    }, []);
 
     const [userEmail, setUserEmail] = useState(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
-          if (user) {
-            const atIndex = user.email.indexOf('@');
-            const extractedUsername = atIndex !== -1 ? user.email.slice(0, atIndex) : user.email;
-            setUserEmail(extractedUsername);
-    
-            // Show flash message
-            showMessage({
-              message: "User logged in",
-              description: `Welcome ${extractedUsername}`,
-              type: "success",
-              duration: 5000,
-            });
-          } else {
-            setUserEmail(null);
-          }
-        });
-    
-        return unsubscribe;
-      }, []);
+            if (user) {
+                const atIndex = user.email.indexOf('@');
+                const extractedUsername = atIndex !== -1 ? user.email.slice(0, atIndex) : user.email;
+                setUserEmail(extractedUsername);
 
-      const handleSignOut = async () => {
+                showMessage({
+                    message: "User logged in",
+                    description: `Welcome ${extractedUsername}`,
+                    type: "success",
+                    duration: 5000,
+                });
+            } else {
+                setUserEmail(null);
+            }
+        });
+
+        return unsubscribe;
+    }, []);
+
+    const handleSignOut = async () => {
         try {
             await signOut(auth);
-            toggleSound(); // Add this line to stop the music
+            toggleSound(); // Stop the music if signed out
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
-    
-            // Reset the navigation stack
+
             navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [
-                  { name: 'Login' },
-                ],
-              })
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                })
             );
-    
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                  console.log('User is signed in');
-                } else {
-                  console.log('User is signed out');
-                }
-              });
         } catch (error) {
-            console.error('Error signing out:', error); // Log the error
+            console.error('Error signing out:', error);
         }
-      }
+    };
 
-    return(
+    const handleDeleteAccount = async () => {
+        Alert.alert(
+            'Delete Account',
+            'Are you sure you want to delete your account? This action cannot be undone.',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const user = auth.currentUser;
+                            if (user) {
+                                await deleteUser(user);
+                                toggleSound(); // Stop the music if account is deleted
+                                console.log('User account deleted');
+                                Alert.alert('Account Deleted', 'Your account has been deleted successfully.');
+
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Login' }],
+                                    })
+                                );
+                            } else {
+                                console.log('No user is signed in');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting user account:', error);
+                            Alert.alert('Error', 'There was an issue deleting your account. Please try again later.');
+                        }
+                    },
+                },
+            ]
+        );
+    };
+
+    return (
         <StyledContainer>
-        <StatusBar style="dark" />
+            <StatusBar style="dark" />
             <InnerContainer>
-                
+                <TouchableOpacity
+                    style={{ 
+                        position: 'absolute', 
+                        top: 50, 
+                        right: 10, 
+                        zIndex: 10, // Ensure the touchable is on top
+                        backgroundColor: 'transparent', // Makes sure the touchable area is clear
+                        padding: 5 // Adds padding to make it easier to tap
+                    }}
+                    onPress={() => setModalVisible(true)}
+                >
+                    <Icon name="settings" size={30} color="#000" />
+                </TouchableOpacity>
 
-                
-                <WelcomeContainer> 
-                  
-                    <StyledButton onPress={handleSignOut}>
-                        <ButtonText>
-                            Logout
-                        </ButtonText>
-                    </StyledButton>
-                  
-                <Line />
+                <Modal
+                    isVisible={isModalVisible}
+                    onBackdropPress={() => setModalVisible(false)} // Close modal on backdrop press
+                    style={{ justifyContent: 'flex-end', margin: 0 }} // Position at bottom
+                >
+                    <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                        <TouchableOpacity onPress={handleSignOut} style={{ padding: 10 }}>
+                            <Text>Logout</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleDeleteAccount} style={{ padding: 10 }}>
+                            <Text>Delete Account</Text>
+                        </TouchableOpacity>
+                        <Button title="Close" onPress={() => setModalVisible(false)} />
+                    </View>
+                </Modal>
+
+                <WelcomeContainer>
+                    <Line />
                     <PageTitle welcome={true}>Welcome Swamy</PageTitle>
                     <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
                     <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
                     <StyledFormArea>
                         <Avatar resizeMode="cover" source={require('./../assets/img1.webp')} />
-
                         <Line />
                     </StyledFormArea>
                 </WelcomeContainer>
-
             </InnerContainer>
-            <FlashMessage position="top" /> 
+            <FlashMessage position="top" />
         </StyledContainer>
-        
     );
 };
-
 
 export default Welcome;
