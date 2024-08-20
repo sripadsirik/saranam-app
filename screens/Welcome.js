@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-
 import { View, Text, Alert, Button, TextInput, KeyboardAvoidingView, ScrollView, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { auth, db } from '../firebase';
-
 import { signOut, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { Audio } from 'expo-av';
 import { CommonActions } from '@react-navigation/native';
-
 import { getFirestore, collection, where, getDocs, doc, setDoc, deleteDoc, query, getDoc, updateDoc } from "firebase/firestore";
-
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
 
@@ -22,6 +18,8 @@ import {
     PageTitle,
     SubTitle,
     StyledFormArea,
+    StyledButton,
+    ButtonText,
     Line,
     WelcomeContainer,
     Avatar,
@@ -29,7 +27,6 @@ import {
     StyledButton,
     ButtonText
 } from './../components/stylesw';
-
 
 const validationSchema = Yup.object().shape({
     fullName: Yup.string().min(2, 'Full Name must be at least 2 characters').max(100, 'Full Name must be at most 100 characters').required('Full Name is required'),
@@ -50,7 +47,6 @@ const Welcome = ({ navigation }) => {
     const [showMathaForm, setShowMathaForm] = useState(true);
     const [hasSelectedMathaOption, setHasSelectedMathaOption] = useState(false);
     const formikRef = useRef();
-
     const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
     const toggleSound = async () => {
@@ -79,7 +75,6 @@ const Welcome = ({ navigation }) => {
             }
         };
         loadSound();
-
         return () => {
             sound.current.unloadAsync();
         };
@@ -87,12 +82,11 @@ const Welcome = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-
             if (user) {
                 const atIndex = user.email.indexOf('@');
                 const extractedUsername = atIndex !== -1 ? user.email.slice(0, atIndex) : user.email;
                 setUserEmail(extractedUsername);
-
+                
                 const familyQuery = query(
                     collection(db, "families"),
                     where("members", "array-contains", extractedUsername)
@@ -114,7 +108,6 @@ const Welcome = ({ navigation }) => {
                     setFamilyName(null);
                 }
 
-
                 showMessage({
                     message: "User logged in",
                     description: `Welcome ${extractedUsername}`,
@@ -125,14 +118,12 @@ const Welcome = ({ navigation }) => {
                 setUserEmail(null);
             }
         });
-
         return unsubscribe;
     }, []);
 
     const handleSignOut = async () => {
         try {
             await signOut(auth);
-
             toggleSound();
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
@@ -535,6 +526,5 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
     },
 });
-
 
 export default Welcome;
