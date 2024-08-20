@@ -5,6 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 import { Line } from '../components/styles.js';
 import { ScrollView } from 'react-native';
+import '../navigators/RootStack';
 
 
 
@@ -20,7 +21,7 @@ import{
 }from './../components/stylesl';
 import { MsgBox, ItemBox } from '../components/styles';
 
-const Scriptsstart = () => {
+const Scriptsstart = ({navigation}) => {
   const [urls, setUrls] = useState([]);
   const [ganeshaUrls, setGaneshaUrls] = useState([]);
   const [saiUrls, setSaiUrls] = useState([]);
