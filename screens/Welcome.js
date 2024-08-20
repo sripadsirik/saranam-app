@@ -25,7 +25,9 @@ import {
     Line,
     WelcomeContainer,
     Avatar,
-    StyledContainer
+    StyledContainer,
+    StyledButton,
+    ButtonText
 } from './../components/stylesw';
 
 
