@@ -451,6 +451,7 @@ const Welcome = ({ navigation }) => {
                                             handleMathaConfirmation();
                                             setHasSelectedMathaOption(true);  // Mark that a selection has been made
                                         }} />
+                                        <Text> </Text>
                                         <Button title="No" onPress={handleNoMatha} />
                                     </View>
                                 )}
