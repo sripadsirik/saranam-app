@@ -2,7 +2,7 @@
   "expo": {
     "name": "saranam-app",
     "slug": "saranam-app",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.jpeg",
     "userInterfaceStyle": "light",
@@ -16,16 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ssiri5.saranamapp",
-      "buildNumber": "3"
+      "bundleIdentifier": "com.ssiri5.saranamapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ssiri5.saranamapp",
-      "versionCode": 3
+      "package": "com.ssiri5.saranamapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
