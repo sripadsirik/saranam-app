@@ -84,11 +84,7 @@ const Start = ({navigation}) => {
                     </StyledButton>
 
 
-                    <StyledButton onPress={() => navigation.navigate('Calendarstart')} >
-                        <ButtonText>
-                            View the Calendar
-                        </ButtonText>
-                    </StyledButton>
+                    
 
                     <Line></Line>
                     <Text>

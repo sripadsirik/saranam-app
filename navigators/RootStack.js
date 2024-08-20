@@ -188,7 +188,6 @@ const RootStack = () => {
         <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-        <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
         <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen 
