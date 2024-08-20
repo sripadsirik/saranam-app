@@ -16,9 +16,14 @@ import About from '../screens/About';
 import Calendar from '../screens/Calendar';
 import Bookings from '../screens/Booking';
 import Start from '../screens/Start';
+
+import Calendarstart from '../screens/Calendarstart';
+import Aboutstart from '../screens/Aboutstart';
+
 import Mathawelcome from '../matha_screens/mathawelcome';  
 import Mathafood from '../matha_screens/mathafood';  
 import Foodlist from '../matha_screens/foodlist';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -183,6 +188,8 @@ const RootStack = () => {
         <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
+        <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen 
           name="MathaTabs" 
