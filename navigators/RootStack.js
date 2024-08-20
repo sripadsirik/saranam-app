@@ -19,6 +19,7 @@ import Start from '../screens/Start';
 
 import Calendarstart from '../screens/Calendarstart';
 import Aboutstart from '../screens/Aboutstart';
+import Scriptsstart from '../screens/Scriptsstart';
 
 import Mathawelcome from '../matha_screens/mathawelcome';  
 import Mathafood from '../matha_screens/mathafood';  
@@ -189,6 +190,8 @@ const RootStack = () => {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
+        <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
+        <Stack.Screen name="Scriptsstart" component={Scriptsstart} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen 
           name="MathaTabs" 
