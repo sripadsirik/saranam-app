@@ -11,18 +11,12 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyD7lFiOkHpRIbpT8Sp3DzW8Xk1FUlOnItA",
   authDomain: "saranam-app.firebaseapp.com",
+  databaseURL: "https://saranam-app-default-rtdb.firebaseio.com",
   projectId: "saranam-app",
   storageBucket: "saranam-app.appspot.com",
   messagingSenderId: "743042145272",
   appId: "1:743042145272:web:8db707cb815eaf93dcd40d",
   measurementId: "G-XJ8TKYN71K"
-  // apiKey: "AIzaSyAWssVKQfoDsrUnMik1S1V_StKU8M2Z80o",
-  // authDomain: "saranam-app-4f983.firebaseapp.com",
-  // projectId: "saranam-app-4f983",
-  // storageBucket: "saranam-app-4f983.appspot.com",
-  // messagingSenderId: "415959821048",
-  // appId: "1:415959821048:web:e3f3fdd447d357e180a90d",
-  // measurementId: "G-QMCSG81CSQ"
 };
 
 // Initialize Firebase

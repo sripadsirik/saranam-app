@@ -1,5 +1,5 @@
-// RootStack.js
-import React from 'react';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,8 +16,13 @@ import About from '../screens/About';
 import Calendar from '../screens/Calendar';
 import Bookings from '../screens/Booking';
 import Start from '../screens/Start';
+
 import Calendarstart from '../screens/Calendarstart';
 import Aboutstart from '../screens/Aboutstart';
+
+import Mathawelcome from '../matha_screens/mathawelcome';  
+import Mathafood from '../matha_screens/mathafood';  
+import Foodlist from '../matha_screens/foodlist';
 
 
 const Stack = createStackNavigator();
@@ -78,6 +83,90 @@ const BottomTabNavigator = () => {
   );
 };
 
+const MathaTabNavigator = ({ navigation }) => {
+  useEffect(() => {
+    const backAction = () => {
+      // Prevent default back button behavior
+      return true;
+    };
+
+    // Add event listener for hardware back button press
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => {
+      // Clean up the event listener
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, []);
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerLeft: () => (
+          <TouchableOpacity 
+            style={{ flexDirection: 'row', alignItems: 'center' }} 
+            onPress={() => navigation.navigate('BottomTabs')} // Navigate back to BottomTabs
+          >
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={tertiary}
+              style={{ marginLeft: 20 }}
+            />
+            <Text style={{ color: tertiary, marginLeft: 10, fontSize: 16 }}>Back to Scheduling</Text>
+          </TouchableOpacity>
+        ),
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Matha Home') {
+            iconName = 'home-outline';
+          }
+          else if (route.name === 'Food Selection') {
+            iconName = 'flame-outline';
+          }
+          else if (route.name === 'Food List') {
+            iconName = 'leaf-outline';
+          }
+          else if (route.name === 'Calendar') {
+            iconName = 'calendar-outline';
+          }
+          else if (route.name === 'Songs') {
+            iconName = 'document-text-outline';
+          }
+
+          return <TabIcon focused={focused} name={iconName} />;
+        },
+        tabBarActiveTintColor: brand,
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          zIndex: 0,
+        },
+        headerStyle: {
+          backgroundColor: 'transparent',
+        },
+        headerTintColor: tertiary,
+        headerTitle: '',
+        headerLeftContainerStyle: {
+          paddingLeft: 20,
+        },
+      })}
+    >
+      <Tab.Screen options={{headerShown: true}} name="Matha Home" component={Mathawelcome} />
+      <Tab.Screen options={{headerShown: true}} name="Food Selection" component={Mathafood} />
+      <Tab.Screen options={{headerShown: true}} name="Food List" component={Foodlist} />
+      <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
+      <Tab.Screen options={{headerShown: false}} name="Songs" component={Scripts} />
+    </Tab.Navigator>
+  );
+};
+
 const RootStack = () => {
   return (
     <NavigationContainer>
@@ -92,6 +181,7 @@ const RootStack = () => {
           headerLeftContainerStyle: {
             paddingLeft: 20,
           },
+          gestureEnabled: false,  // Disable swipe back gesture on iOS
         }}
         initialRouteName="Start"
       >
@@ -101,6 +191,14 @@ const RootStack = () => {
         <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
         <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
         <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="MathaTabs" 
+          component={MathaTabNavigator} 
+          options={{ 
+            headerShown: false,
+            gestureEnabled: false,  // Disable swipe back gesture on iOS
+          }} 
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

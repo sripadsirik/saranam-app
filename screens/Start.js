@@ -83,11 +83,13 @@ const Start = ({navigation}) => {
                         </ButtonText>
                     </StyledButton>
 
+
                     <StyledButton onPress={() => navigation.navigate('Calendarstart')} >
                         <ButtonText>
                             View the Calendar
                         </ButtonText>
                     </StyledButton>
+
                     <Line></Line>
                     <Text>
                         Next to use the app, either signup or login:

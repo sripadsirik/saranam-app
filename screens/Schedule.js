@@ -40,7 +40,7 @@ import{
 
 const {brand, darkLight, primary} = Colors;
 
-const Schedule = () => {
+const Schedule = ({navigation}) => {
     
     const db = getFirestore();
     const auth = getAuth();
@@ -175,6 +175,7 @@ const Schedule = () => {
                                 }
 
                                 Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your arrangement.');
+                                navigation.navigate('Bookings');
                                 console.log(values);
                             }
                         }}
@@ -295,6 +296,7 @@ const Schedule = () => {
                         <Line />
                     </StyledFormArea>)}
                     </Formik>
+
                     <Text></Text>
                     <Text></Text>
                     <Text></Text>
@@ -313,6 +315,7 @@ const Schedule = () => {
                     <Text></Text>
                     <Text></Text>
                     <Text></Text>
+
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
