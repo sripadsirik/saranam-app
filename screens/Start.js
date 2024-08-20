@@ -71,14 +71,25 @@ const Start = ({navigation}) => {
                     <SubTitle> Swamy Saranam </SubTitle>
                     <StatusBar style="dark" />
                     {/* <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} /> */}
+                    {/* <Text> </Text> */}
+                    <TextLink onPress={() => navigation.navigate('Aboutstart')}>
+                        <TextLinkContent> About Us </TextLinkContent>
+                    </TextLink>
                     <Text> </Text>
-
                     <Text> If you haven't signed up to be a swamy yet, please do so below: </Text>
                     <StyledButton onPress={() => Linking.openURL('https://forms.gle/gwPA3cZa1P6yAtCq7')} >
                         <ButtonText>
                             Signup to be a Swamy
                         </ButtonText>
                     </StyledButton>
+
+
+                    <StyledButton onPress={() => navigation.navigate('Calendarstart')} >
+                        <ButtonText>
+                            View the Calendar
+                        </ButtonText>
+                    </StyledButton>
+
                     <Line></Line>
                     <Text>
                         Next to use the app, either signup or login:

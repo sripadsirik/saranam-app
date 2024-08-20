@@ -195,7 +195,7 @@ const Schedule = ({navigation}) => {
                         <MyTextInput 
                             label="Full Name"
                             icon="person"
-                            placeholder="Ling Lee"
+                            placeholder="Pawan Kalyan"
                             placeholderTextColor={darkLight}
                             onChangeText={handleChange('fullName')}
                             onBlur={handleBlur('fullName')}
@@ -281,7 +281,7 @@ const Schedule = ({navigation}) => {
                         <MyTextInput 
                             label="Your Address"
                             icon="note"
-                            placeholder="111 Howle Rd"
+                            placeholder="111 Drummer Rd"
                             placeholderTextColor={darkLight}
                             onChangeText={handleChange('address')}
                             onBlur={handleBlur('address')}
@@ -296,23 +296,26 @@ const Schedule = ({navigation}) => {
                         <Line />
                     </StyledFormArea>)}
                     </Formik>
-                    <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text><Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text><Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text><Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
+
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+                    <Text></Text>
+
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
