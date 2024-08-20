@@ -194,7 +194,7 @@ const Schedule = () => {
                         <MyTextInput 
                             label="Full Name"
                             icon="person"
-                            placeholder="Ling Lee"
+                            placeholder="Pawan Kalyan"
                             placeholderTextColor={darkLight}
                             onChangeText={handleChange('fullName')}
                             onBlur={handleBlur('fullName')}
@@ -280,7 +280,7 @@ const Schedule = () => {
                         <MyTextInput 
                             label="Your Address"
                             icon="note"
-                            placeholder="111 Howle Rd"
+                            placeholder="111 Drummer Rd"
                             placeholderTextColor={darkLight}
                             onChangeText={handleChange('address')}
                             onBlur={handleBlur('address')}
