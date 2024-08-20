@@ -257,39 +257,7 @@ const Welcome = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        borderRadius: 4
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 12,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        width: '80%',
-    },
-    picker: {
-        height: 200,
-        width: '100%',
-    },
-    redButton: {
-        backgroundColor: 'red',
-    },
-});
+
 
 
 export default Welcome;
