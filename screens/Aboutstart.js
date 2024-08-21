@@ -17,7 +17,7 @@ import {
 } from './../components/stylesa';
 import { ItemBox } from '../components/styles';
 
-const Aboutstart = () => {
+const Aboutstart = ({ navigation }) => {
     return (
         <ScrollView>
             <StyledContainer>
