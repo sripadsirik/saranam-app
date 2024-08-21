@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './../components/styles';
+import { View, Text, TouchableOpacity } from 'react-native'; // Ensure Text is imported
 const { tertiary, brand } = Colors;
 
 import Login from './../screens/Login'; 
@@ -24,7 +23,6 @@ import Scriptsstart from '../screens/Scriptsstart';
 import Mathawelcome from '../matha_screens/mathawelcome';  
 import Mathafood from '../matha_screens/mathafood';  
 import Foodlist from '../matha_screens/foodlist';
-
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,28 +83,13 @@ const BottomTabNavigator = () => {
 };
 
 const MathaTabNavigator = ({ navigation }) => {
-  useEffect(() => {
-    const backAction = () => {
-      // Prevent default back button behavior
-      return true;
-    };
-
-    // Add event listener for hardware back button press
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () => {
-      // Clean up the event listener
-      BackHandler.removeEventListener('hardwareBackPress', backAction);
-    };
-  }, []);
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerLeft: () => (
           <TouchableOpacity 
             style={{ flexDirection: 'row', alignItems: 'center' }} 
-            onPress={() => navigation.navigate('BottomTabs')} // Navigate back to BottomTabs
+            onPress={() => navigation.navigate('BottomTabs')}
           >
             <Ionicons
               name="arrow-back"
@@ -114,7 +97,9 @@ const MathaTabNavigator = ({ navigation }) => {
               color={tertiary}
               style={{ marginLeft: 20 }}
             />
-            <Text style={{ color: tertiary, marginLeft: 10, fontSize: 16 }}>Back to Scheduling</Text>
+            <Text style={{ color: tertiary, marginLeft: 10, fontSize: 16 }}>
+              Back to Scheduling
+            </Text>
           </TouchableOpacity>
         ),
         tabBarIcon: ({ focused, color, size }) => {
@@ -168,41 +153,39 @@ const MathaTabNavigator = ({ navigation }) => {
   );
 };
 
-const RootStack = () => {
+const RootStack = ({ initialRouteName = 'Start' }) => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: 'transparent',
-          },
-          headerTintColor: tertiary,
-          headerTransparent: true,
-          headerTitle: '',
-          headerLeftContainerStyle: {
-            paddingLeft: 20,
-          },
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: 'transparent',
+        },
+        headerTintColor: tertiary,
+        headerTransparent: true,
+        headerTitle: '',
+        headerLeftContainerStyle: {
+          paddingLeft: 20,
+        },
+        gestureEnabled: false,  // Disable swipe back gesture on iOS
+      }}
+      initialRouteName={initialRouteName}
+    >
+      <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
+      <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+      <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
+      <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
+      <Stack.Screen name="Scriptsstart" component={Scriptsstart} options={{ headerShown: false }} />
+      <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="MathaTabs" 
+        component={MathaTabNavigator} 
+        options={{ 
+          headerShown: false,
           gestureEnabled: false,  // Disable swipe back gesture on iOS
-        }}
-        initialRouteName="Start"
-      >
-        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: true }} />
-        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-        <Stack.Screen name="Aboutstart" component={Aboutstart} options={{ headerShown: false }} />
-        <Stack.Screen name="Calendarstart" component={Calendarstart} options={{ headerShown: false }} />
-        <Stack.Screen name="Scriptsstart" component={Scriptsstart} options={{ headerShown: false }} />
-        <Stack.Screen name="BottomTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="MathaTabs" 
-          component={MathaTabNavigator} 
-          options={{ 
-            headerShown: false,
-            gestureEnabled: false,  // Disable swipe back gesture on iOS
-          }} 
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+        }} 
+      />
+    </Stack.Navigator>
   );
 };
 
