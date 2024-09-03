@@ -180,6 +180,8 @@ const Welcome = ({ navigation }) => {
         );
     };
 
+
+
     const handleHeadOfFamilyConfirmation = () => {
         setIsHeadOfFamily(true);
     };
@@ -348,6 +350,7 @@ const Welcome = ({ navigation }) => {
         }
     };
 
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -392,24 +395,16 @@ const Welcome = ({ navigation }) => {
                         <Text> </Text>
                         <Text> </Text>
                         <WelcomeContainer>
-                            <StyledButton onPress={handleResetFamily}>
-                                <ButtonText>Reset Family/Form</ButtonText>
-                            </StyledButton>
-                            {hasSelectedMathaOption && (
-                                <StyledButton onPress={handleChangeMathaConfirmation}>
-                                    <ButtonText>Change Matha Confirmation</ButtonText>
-                                </StyledButton>
-                            )}
+                            
                             <Line />
                             <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
                             <PageTitle welcome={true}>Welcome Swamy</PageTitle>
                             <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
-                            <SubTitle welcome={true}>
-                                {familyName ? `You are part of the family: ${familyName}` : "You are not part of any family.\n Please answer questions below"}
-                            </SubTitle>
+                            
                             <StyledFormArea>
                                 <Avatar resizeMode="cover" source={require('../assets/img1.webp')} />
                                 <Line />
+
                                 {!familyName && !isHeadOfFamily && (
                                     <View>
                                         <Text>Are you the head Swami of the family?</Text>
@@ -474,6 +469,7 @@ const Welcome = ({ navigation }) => {
                                         )}
                                     </>
                                 )}
+
                             </StyledFormArea>
                         </WelcomeContainer>
                         <Text> </Text>
@@ -483,68 +479,12 @@ const Welcome = ({ navigation }) => {
                     </InnerContainer>
                 </StyledContainer>
             </ScrollView>
-            <Modal
-                visible={isPickerVisible}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setPickerVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text>Select a Family</Text>
-                        <Picker
-                            selectedValue={pickerValue}
-                            onValueChange={(itemValue) => setPickerValue(itemValue)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Select a family" value="" />
-                            {families.map(family => (
-                                <Picker.Item key={family.value} label={family.label} value={family.value} />
-                            ))}
-                        </Picker>
-                        <Button title="Join Family" onPress={handleJoinFamily} />
-                        <Text> </Text>
-                        <Button title="Cancel" onPress={() => setPickerVisible(false)} />
-                    </View>
-                </View>
-            </Modal>
+            
             <FlashMessage position="top" />
         </KeyboardAvoidingView>
     );
 };
 
-const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        borderRadius: 4
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 12,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        width: '80%',
-    },
-    picker: {
-        height: 200,
-        width: '100%',
-    },
-    redButton: {
-        backgroundColor: 'red',
-    },
-});
+
 
 export default Welcome;
