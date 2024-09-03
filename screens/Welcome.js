@@ -1,22 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-
 import { View, Text, Alert, Button, TextInput, KeyboardAvoidingView, ScrollView, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { auth, db } from '../firebase';
-
 import { signOut, deleteUser, onAuthStateChanged } from 'firebase/auth';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { Audio } from 'expo-av';
 import { CommonActions } from '@react-navigation/native';
-
 import { getFirestore, collection, where, getDocs, doc, setDoc, deleteDoc, query, getDoc, updateDoc } from "firebase/firestore";
-
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
-
 import {
     InnerContainer,
     PageTitle,
@@ -25,9 +20,10 @@ import {
     Line,
     WelcomeContainer,
     Avatar,
-    StyledContainer
+    StyledContainer,
+    StyledButton,
+    ButtonText
 } from './../components/stylesw';
-
 
 const validationSchema = Yup.object().shape({
     fullName: Yup.string().min(2, 'Full Name must be at least 2 characters').max(100, 'Full Name must be at most 100 characters').required('Full Name is required'),
@@ -48,7 +44,6 @@ const Welcome = ({ navigation }) => {
     const [showMathaForm, setShowMathaForm] = useState(true);
     const [hasSelectedMathaOption, setHasSelectedMathaOption] = useState(false);
     const formikRef = useRef();
-
     const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
     const toggleSound = async () => {
@@ -85,7 +80,6 @@ const Welcome = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-
             if (user) {
                 const atIndex = user.email.indexOf('@');
                 const extractedUsername = atIndex !== -1 ? user.email.slice(0, atIndex) : user.email;
@@ -101,9 +95,10 @@ const Welcome = ({ navigation }) => {
                     const familyDoc = familySnapshot.docs[0];
                     setFamilyName(familyDoc.id);
 
-                    // Check if the user is already confirmed as Matha
                     const familyData = familyDoc.data();
-                    if (familyData.matha === extractedUsername) {
+                    const mathaData = familyData.matha || {};
+
+                    if (mathaData.members?.includes(extractedUsername)) {
                         setIsMatha(true);
                         setHasSelectedMathaOption(true);
                         setShowMathaForm(false);  // Hide the Matha form since the user is already confirmed
@@ -111,7 +106,6 @@ const Welcome = ({ navigation }) => {
                 } else {
                     setFamilyName(null);
                 }
-
 
                 showMessage({
                     message: "User logged in",
@@ -130,7 +124,6 @@ const Welcome = ({ navigation }) => {
     const handleSignOut = async () => {
         try {
             await signOut(auth);
-
             toggleSound();
             console.log('User signed out');
             Alert.alert('Logged out', 'User logged out successfully');
@@ -188,6 +181,176 @@ const Welcome = ({ navigation }) => {
     };
 
 
+
+    const handleHeadOfFamilyConfirmation = () => {
+        setIsHeadOfFamily(true);
+    };
+
+    const handleMathaConfirmation = async () => {
+        try {
+            if (familyName) {
+                const familyDocRef = doc(db, "families", familyName);
+                const familyDoc = await getDoc(familyDocRef);
+                
+                if (familyDoc.exists()) {
+                    const familyData = familyDoc.data();
+                    const mathaMembers = familyData.matha?.members || [];
+
+                    // Check if user is already a Matha member
+                    if (!mathaMembers.includes(userEmail)) {
+                        mathaMembers.push(userEmail);
+                    }
+
+                    await setDoc(familyDocRef, {
+                        matha: {
+                            leader: familyData.matha?.leader || userEmail,
+                            members: mathaMembers
+                        }
+                    }, { merge: true });
+
+                    setIsMatha(true);
+                    setShowMathaForm(false);
+                    setHasSelectedMathaOption(true);
+                    Alert.alert("Matha Confirmed", "You are confirmed as Matha of the family!");
+                } else {
+                    Alert.alert("Error", "Family document does not exist.");
+                }
+            } else {
+                Alert.alert("Error", "No family found to update.");
+            }
+        } catch (error) {
+            console.error("Error updating family document: ", error);
+            Alert.alert("Error", "There was an error updating the family document. Please try again.");
+        }
+    };
+    
+    const fetchFamilies = async () => {
+        try {
+            const familyCollection = collection(db, "families");
+            const familySnapshot = await getDocs(familyCollection);
+            const familyList = familySnapshot.docs.map(doc => ({ label: doc.id, value: doc.id }));
+            setFamilies(familyList);
+            setPickerValue('');
+            setPickerVisible(true);
+        } catch (error) {
+            console.error("Error fetching families: ", error);
+            Alert.alert("Error", "There was an error fetching families. Please try again.");
+        }
+    };
+
+    const handleCreateFamily = async (values) => {
+        try {
+            const familyName = values.fullName.trim();
+            if (familyName === "") {
+                Alert.alert("Invalid Name", "Please enter a valid full name.");
+                return;
+            }
+
+            const familyDocRef = doc(collection(db, "families"), familyName);
+            await setDoc(familyDocRef, {
+                head: userEmail,
+                members: [userEmail],
+            });
+
+            Alert.alert("Family Created", `Family created successfully under the name: ${familyName}`);
+            setFamilyName(familyName);
+            setIsHeadOfFamily(false);
+            setIsChoosingFamily(false);
+        } catch (error) {
+            console.error("Error creating family: ", error);
+            Alert.alert("Error", "There was an error creating the family. Please try again.");
+        }
+    };
+
+    const handleJoinFamily = async () => {
+        try {
+            if (pickerValue) {
+                const familyDocRef = doc(db, "families", pickerValue);
+                const familyDoc = await getDoc(familyDocRef);
+
+                if (familyDoc.exists()) {
+                    const familyData = familyDoc.data();
+                    const members = familyData.members || [];
+                    members.push(userEmail);
+
+                    await setDoc(familyDocRef, {
+                        ...familyData,
+                        members: members
+                    }, { merge: true });
+
+                    Alert.alert("Family Joined", `Successfully joined the family: ${pickerValue}`);
+                    setFamilyName(pickerValue);
+                    setPickerVisible(false);
+                } else {
+                    Alert.alert("Error", "Family does not exist.");
+                }
+            }
+        } catch (error) {
+            console.error("Error joining family: ", error);
+            Alert.alert("Error", "There was an error joining the family. Please try again.");
+        }
+    };
+
+    const handleResetFamily = async () => {
+        try {
+            if (familyName) {
+                const familyDocRef = doc(db, "families", familyName);
+                await deleteDoc(familyDocRef);
+    
+                Alert.alert("Family Reset", `Family '${familyName}' has been deleted.`);
+                setFamilyName(null);
+                setIsHeadOfFamily(false);
+                setIsChoosingFamily(false);
+                setSelectedFamily(null);
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+                if (formikRef.current) {
+                    formikRef.current.resetForm();
+                }
+            } else {
+                Alert.alert("No Family", "You are not currently in a family.");
+                setIsHeadOfFamily(false);
+                setIsChoosingFamily(false);
+                setSelectedFamily(null);
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+                if (formikRef.current) {
+                    formikRef.current.resetForm();
+                }
+            }
+        } catch (error) {
+            console.error("Error resetting family: ", error);
+        }
+    };
+
+    const handleNoMatha = () => {
+        setShowMathaForm(false);
+        setHasSelectedMathaOption(true);  // Mark that a selection has been made
+    };
+
+    const handleChangeMathaConfirmation = async () => {
+        try {
+            if (familyName) {
+                const familyDocRef = doc(db, "families", familyName);
+                await updateDoc(familyDocRef, {
+                    matha: null
+                });
+
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+            } else {
+                Alert.alert("Error", "No family found to update.");
+            }
+        } catch (error) {
+            console.error("Error removing Matha field: ", error);
+            Alert.alert("Error", "There was an error removing the Matha field. Please try again.");
+        }
+    };
+
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -241,7 +404,72 @@ const Welcome = ({ navigation }) => {
                             <StyledFormArea>
                                 <Avatar resizeMode="cover" source={require('../assets/img1.webp')} />
                                 <Line />
-                                
+
+                                {!familyName && !isHeadOfFamily && (
+                                    <View>
+                                        <Text>Are you the head Swami of the family?</Text>
+                                        <Button title="Yes" onPress={handleHeadOfFamilyConfirmation} />
+                                        <Text> </Text>
+                                        <Button title="No" onPress={fetchFamilies} />
+                                    </View>
+                                )}
+                                {isHeadOfFamily && !familyName && (
+                                    <Formik
+                                        innerRef={formikRef}
+                                        initialValues={{ fullName: '' }}
+                                        validationSchema={validationSchema}
+                                        onSubmit={handleCreateFamily}
+                                    >
+                                        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                                            <View>
+                                                <TextInput
+                                                    placeholder="Family Name"
+                                                    onChangeText={handleChange('fullName')}
+                                                    onBlur={handleBlur('fullName')}
+                                                    value={values.fullName}
+                                                    style={styles.input}
+                                                />
+                                                {errors.fullName && touched.fullName && (
+                                                    <Text style={styles.errorText}>{errors.fullName}</Text>
+                                                )}
+                                                <StyledButton onPress={handleSubmit}>
+                                                    <ButtonText>Create Family</ButtonText>
+                                                </StyledButton>
+                                            </View>
+                                        )}
+                                    </Formik>
+                                )}
+
+                                {/* Matha Confirmation */}
+                                {familyName && !isMatha && showMathaForm && (
+                                    <View>
+                                        <Text>Are you a Matha of the family?</Text>
+                                        <Button title="Yes" onPress={() => {
+                                            handleMathaConfirmation();
+                                            setHasSelectedMathaOption(true);  // Mark that a selection has been made
+                                        }} />
+                                        <Text> </Text>
+                                        <Button title="No" onPress={handleNoMatha} />
+                                    </View>
+                                )}
+
+                                {isMatha && (
+                                    <>
+                                        <Text>You are confirmed as Matha of the family!</Text>
+                                        <StyledButton onPress={() => navigation.navigate("MathaTabs")}>
+                                            <ButtonText>Go to Matha Screens to Select Food</ButtonText>
+                                        </StyledButton>
+                                        {families.matha && (
+                                            <View>
+                                                <Text>Matha Members:</Text>
+                                                {families.matha.members.map((member, index) => (
+                                                    <Text key={index}>{member}</Text>
+                                                ))}
+                                            </View>
+                                        )}
+                                    </>
+                                )}
+
                             </StyledFormArea>
                         </WelcomeContainer>
                         <Text> </Text>
@@ -256,7 +484,6 @@ const Welcome = ({ navigation }) => {
         </KeyboardAvoidingView>
     );
 };
-
 
 
 
