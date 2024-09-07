@@ -30,8 +30,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const Welcome = ({ navigation }) => {
-    const sound = useRef(new Audio.Sound());
-    const [isPlaying, setIsPlaying] = useState(true);
+    // const sound = useRef(new Audio.Sound());
+    // const [isPlaying, setIsPlaying] = useState(true);
     const [userEmail, setUserEmail] = useState(null);
     const [familyName, setFamilyName] = useState(null);
     const [isHeadOfFamily, setIsHeadOfFamily] = useState(false);
@@ -46,37 +46,37 @@ const Welcome = ({ navigation }) => {
     const formikRef = useRef();
     const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
-    const toggleSound = async () => {
-        if (isPlaying) {
-            await sound.current.stopAsync();
-        } else {
-            await sound.current.setPositionAsync(6000);
-            await sound.current.playAsync();
-        }
-        setIsPlaying(!isPlaying);
-    };
+    // const toggleSound = async () => {
+    //     if (isPlaying) {
+    //         await sound.current.stopAsync();
+    //     } else {
+    //         await sound.current.setPositionAsync(6000);
+    //         await sound.current.playAsync();
+    //     }
+    //     setIsPlaying(!isPlaying);
+    // };
 
-    useEffect(() => {
-        const loadSound = async () => {
-            try {
-                await sound.current.loadAsync(
-                    require('../assets/saranam.mp3'),
-                    { isLooping: true },
-                );
-                await sound.current.setPositionAsync(6000);
-                if (isPlaying) {
-                    await sound.current.playAsync();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        loadSound();
+    // useEffect(() => {
+    //     const loadSound = async () => {
+    //         try {
+    //             await sound.current.loadAsync(
+    //                 require('../assets/saranam.mp3'),
+    //                 { isLooping: true },
+    //             );
+    //             await sound.current.setPositionAsync(6000);
+    //             if (isPlaying) {
+    //                 await sound.current.playAsync();
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
+    //     loadSound();
 
-        return () => {
-            sound.current.unloadAsync();
-        };
-    }, []);
+    //     return () => {
+    //         sound.current.unloadAsync();
+    //     };
+    // }, []);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -180,10 +180,9 @@ const Welcome = ({ navigation }) => {
         );
     };
 
-
-
     const handleHeadOfFamilyConfirmation = () => {
         setIsHeadOfFamily(true);
+        console.log('Head of family confirmed');
     };
 
     const handleMathaConfirmation = async () => {
@@ -295,35 +294,40 @@ const Welcome = ({ navigation }) => {
         try {
             if (familyName) {
                 const familyDocRef = doc(db, "families", familyName);
-                await deleteDoc(familyDocRef);
+                const familyDoc = await getDoc(familyDocRef);
     
-                Alert.alert("Family Reset", `Family '${familyName}' has been deleted.`);
-                setFamilyName(null);
-                setIsHeadOfFamily(false);
-                setIsChoosingFamily(false);
-                setSelectedFamily(null);
-                setIsMatha(false);
-                setShowMathaForm(true);
-                setHasSelectedMathaOption(false);
-                if (formikRef.current) {
-                    formikRef.current.resetForm();
+                if (familyDoc.exists()) {
+                    const familyData = familyDoc.data();
+                    const updatedMembers = familyData.members.filter(member => member !== userEmail);
+    
+                    // Update the family members array by removing the current user
+                    await updateDoc(familyDocRef, {
+                        members: updatedMembers
+                    });
+    
+                    Alert.alert("Family Reset", `You have been removed from the family: ${familyName}`);
+                    setFamilyName(null);
+                    setIsHeadOfFamily(false);
+                    setIsChoosingFamily(false);
+                    setSelectedFamily(null);
+                    setIsMatha(false);
+                    setShowMathaForm(true);
+                    setHasSelectedMathaOption(false);
+                    if (formikRef.current) {
+                        formikRef.current.resetForm();
+                    }
+                } else {
+                    Alert.alert("No Family", "Family document does not exist.");
                 }
             } else {
                 Alert.alert("No Family", "You are not currently in a family.");
-                setIsHeadOfFamily(false);
-                setIsChoosingFamily(false);
-                setSelectedFamily(null);
-                setIsMatha(false);
-                setShowMathaForm(true);
-                setHasSelectedMathaOption(false);
-                if (formikRef.current) {
-                    formikRef.current.resetForm();
-                }
             }
         } catch (error) {
             console.error("Error resetting family: ", error);
+            Alert.alert("Error", "There was an error removing you from the family. Please try again.");
         }
     };
+    
 
     const handleNoMatha = () => {
         setShowMathaForm(false);
@@ -347,6 +351,40 @@ const Welcome = ({ navigation }) => {
         } catch (error) {
             console.error("Error removing Matha field: ", error);
             Alert.alert("Error", "There was an error removing the Matha field. Please try again.");
+        }
+    };
+
+    const handleDeleteFamily = async () => {
+        try {
+            if (familyName) {
+                const familyDocRef = doc(db, "families", familyName);
+                await deleteDoc(familyDocRef);
+                Alert.alert("Family Deleted", `Family '${familyName}' has been deleted.`);
+                setFamilyName(null);
+                setIsHeadOfFamily(false);
+                setIsChoosingFamily(false);
+                setSelectedFamily(null);
+                setIsMatha(false);
+                setShowMathaForm(true);
+                setHasSelectedMathaOption(false);
+                if (formikRef.current) {
+                    formikRef.current.resetForm();
+                }
+            } else {
+                Alert.alert("Error", "No family found to delete.");
+            }
+        } catch (error) {
+            console.error("Error deleting family: ", error);
+            Alert.alert("Error", "There was an error deleting the family. Please try again.");
+        }
+    };
+    const handleResetForm = () => {
+        setIsHeadOfFamily(false);
+        setIsChoosingFamily(false);
+        // setHasSelectedMathaOption(false);
+        // setShowMathaForm(true);
+        if (formikRef.current) {
+            formikRef.current.resetForm();
         }
     };
 
@@ -374,18 +412,48 @@ const Welcome = ({ navigation }) => {
                             <Icon name="settings" size={30} color="#000" />
                         </TouchableOpacity>
 
+                        {/* Reset Form Button */}
+                        {!familyName && isChoosingFamily && (
+                            <TouchableOpacity
+                                style={{
+                                    position: 'absolute',
+                                    top: 50,
+                                    left: 10,
+                                    zIndex: 10,
+                                    backgroundColor: 'transparent',
+                                    padding: 5
+                                }}
+                                onPress={handleResetForm}
+                            >
+                                <Text>Reset Form</Text>
+                            </TouchableOpacity>
+                        )}
+
                         <Modal
                             isVisible={isModalVisible}
                             onBackdropPress={() => setModalVisible(false)} // Close modal on backdrop press
-                            style={{ justifyContent: 'flex-end', margin: 0 }} // Position at bottom
+                            style={{ justifyContent: 'center', margin: 0 }} // Position at bottom
                         >
-                            <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                            <View style={{ backgroundColor: 'black', padding: 20, borderRadius: 10 }}>
                                 <TouchableOpacity onPress={handleSignOut} style={{ padding: 10 }}>
-                                    <Text>Logout</Text>
+                                    <Text style={{ color: 'white' }}>Logout</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={handleDeleteAccount} style={{ padding: 10 }}>
-                                    <Text>Delete Account</Text>
+                                    <Text style={{ color: 'red' }}>Delete Account</Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity onPress={handleResetFamily} style={{ padding: 10 }}>
+                                    <Text style={{ color: 'white' }}>Reset Family</Text>
+                                </TouchableOpacity>
+                                {hasSelectedMathaOption && (
+                                    <TouchableOpacity onPress={handleChangeMathaConfirmation} style={{ padding: 10 }}>
+                                        <Text style={{ color: 'white' }}>Change Matha Confirmation</Text>
+                                    </TouchableOpacity>
+                                )}
+                                {/* {isHeadOfFamily && familyName && (  */}
+                                    <TouchableOpacity onPress={handleDeleteFamily} style={{ padding: 10 }}>
+                                        <Text style={{ color: 'red' }}>Delete Entire Family</Text>
+                                    </TouchableOpacity>
+                                {/* )} */}
                                 <Button title="Close" onPress={() => setModalVisible(false)} />
                             </View>
                         </Modal>
@@ -395,16 +463,15 @@ const Welcome = ({ navigation }) => {
                         <Text> </Text>
                         <Text> </Text>
                         <WelcomeContainer>
-                            
-                            <Line />
-                            <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} />
+                            {/* <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} /> */}
                             <PageTitle welcome={true}>Welcome Swamy</PageTitle>
                             <SubTitle welcome={true}>Swamy Saranam {userEmail}</SubTitle>
-                            
+                            <SubTitle welcome={true}>
+                                {familyName ? `You are part of the family: ${familyName}` : "You are not part of any family.\n Please answer questions below"}
+                            </SubTitle>
                             <StyledFormArea>
                                 <Avatar resizeMode="cover" source={require('../assets/img1.webp')} />
                                 <Line />
-
                                 {!familyName && !isHeadOfFamily && (
                                     <View>
                                         <Text>Are you the head Swami of the family?</Text>
@@ -469,7 +536,6 @@ const Welcome = ({ navigation }) => {
                                         )}
                                     </>
                                 )}
-
                             </StyledFormArea>
                         </WelcomeContainer>
                         <Text> </Text>
@@ -479,12 +545,68 @@ const Welcome = ({ navigation }) => {
                     </InnerContainer>
                 </StyledContainer>
             </ScrollView>
-            
+            <Modal
+                visible={isPickerVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setPickerVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>Select a Family</Text>
+                        <Picker
+                            selectedValue={pickerValue}
+                            onValueChange={(itemValue) => setPickerValue(itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select a family" value="" />
+                            {families.map(family => (
+                                <Picker.Item key={family.value} label={family.label} value={family.value} />
+                            ))}
+                        </Picker>
+                        <Button title="Join Family" onPress={handleJoinFamily} />
+                        <Text> </Text>
+                        <Button title="Cancel" onPress={() => setPickerVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
             <FlashMessage position="top" />
         </KeyboardAvoidingView>
     );
 };
 
-
+const styles = StyleSheet.create({
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 12,
+        paddingHorizontal: 8,
+        borderRadius: 4
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 12,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    picker: {
+        height: 200,
+        width: '100%',
+    },
+    redButton: {
+        backgroundColor: 'red',
+    },
+});
 
 export default Welcome;
