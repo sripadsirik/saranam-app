@@ -84,7 +84,17 @@ const Start = ({navigation}) => {
                     </StyledButton>
 
 
-                    
+                    <StyledButton onPress={() =>navigation.navigate('Calendarstart')} >
+                        <ButtonText>
+                            View the Calendar so far
+                        </ButtonText>
+                    </StyledButton>
+
+                    <StyledButton onPress={() =>navigation.navigate('Scriptsstart')} >
+                        <ButtonText>
+                            View Songs
+                        </ButtonText>
+                    </StyledButton>
 
                     <Line></Line>
                     <Text>
