@@ -1,73 +1,93 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
-import { TouchableOpacity, Text } from 'react-native';
-import { Octicons, Ionicons, Fontisto } from '@expo/vector-icons';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, Text, Alert } from 'react-native';
+import { Octicons } from '@expo/vector-icons';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
-import { ScrollView } from 'react-native';
-import { auth, analytics } from '../firebase.js';
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { Alert } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Modal, Button, View } from 'react-native'; // Make sure Modal, Button, and View are imported
 import { Picker } from '@react-native-picker/picker';
 import { getFirestore, collection, where, getDocs, deleteDoc, addDoc, query, doc } from "firebase/firestore";
+import { auth, analytics } from '../firebase.js';
+import { onSnapshot } from "firebase/firestore";
 
-
-
-import{
+import {
     StyledContainer,
     InnerContainer,
-    PageLogo,
     PageTitle,
-    SubTitle,
     StyledFormArea,
     LeftIcon, 
     StyledInputLabel,
     StyledTextInput,
-    RightIcon,
-    Colors,
     StyledButton,
     ButtonText,
-    MsgBox,
     Line,
-    ExtraView,
-    ExtraText,
-    TextLink,
-    TextLinkContent,
-}from './../components/styleschedule';
+    Colors
+} from './../components/styleschedule';
 
-const {brand, darkLight, primary} = Colors;
+const { brand, darkLight } = Colors;
 
-const Schedule = ({navigation}) => {
-    
+const Schedule = ({ navigation }) => {
     const db = getFirestore();
-    const auth = getAuth();
     const user = auth.currentUser;
     
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  
-    const [name, setName] = useState(''); // Changed email to name and set default value to 'Pooja/Beeksha'
-    const [phoneNumber, setPhoneNumber] = useState(''); // New state for the phone number
-    
-    
-    const [address, setAddress] = useState(''); // New state for the note box
-    
+    const [name, setName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
     const [show, setShow] = useState(false);
     const [date, setDate] = useState(new Date());
-
     const [isPickerVisible, setPickerVisible] = useState(false);
     const [pickerValue, setPickerValue] = useState('');
+    const [familyName, setFamilyName] = useState(null); // New state for family name
+    const [hasFamilyBooking, setHasFamilyBooking] = useState(false);
+
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(
+            query(collection(db, "families"), where("members", "array-contains", user.email)),
+            (snapshot) => {
+                if (!snapshot.empty) {
+                    const familyDoc = snapshot.docs[0];
+                    setFamilyName(familyDoc.id);
+                } else {
+                    setFamilyName(null);
+                }
+            },
+            (error) => console.error("Error fetching family data:", error)
+        );
+
+        return () => unsubscribe(); // Clean up listener when component unmounts
+    }, [user.email]);
+
+    // Fetch any existing booking for the family in real time
+    useEffect(() => {
+        if (familyName) {
+            const unsubscribe = onSnapshot(
+                query(collection(db, "appointments"), where("familyName", "==", familyName)),
+                (snapshot) => {
+                    if (!snapshot.empty) {
+                        setHasFamilyBooking(true); // Family already has a booking
+                    } else {
+                        setHasFamilyBooking(false); // Family doesn't have a booking
+                    }
+                }
+            );
+            return () => unsubscribe(); // Clean up the listener
+        }
+    }, [familyName]);
+
+
+    
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
-        setShow(true); // Add this line
+        setShow(true);
     };
 
     const hideDatePicker = () => {
         setDatePickerVisibility(false);
-        setShow(false); // Add this line
+        setShow(false);
     };
 
     const handleConfirm = (handleChange, selectedDate) => {
@@ -79,21 +99,20 @@ const Schedule = ({navigation}) => {
         hideDatePicker();
     };
 
-    return(
+    return (
         <KeyboardAvoidingWrapper>
             <StyledContainer>
                 <StatusBar style="dark" />
                 <InnerContainer>
                     <PageTitle> Schedule </PageTitle>
-                    <MsgBox> </MsgBox>
-                    <Line />
-                    <MsgBox> </MsgBox>
-
-                    
 
                     <Formik
-                        initialValues = {{fullName: '', name: '', phoneNumber: '', Day: '', address: ''}} // Added phoneNumber to initialValues
+                        initialValues={{ fullName: '', name: '', phoneNumber: '', Day: '', address: '' }}
                         onSubmit={async (values) => {
+                            if (!familyName) {
+                                Alert.alert('Error', 'No family selected. Please select a family before scheduling.');
+                                return;
+                            }
                             if (!values.fullName || values.fullName.length < 2 || values.fullName.length > 100) {
                                 Alert.alert('Error', 'Full Name must be between 2 and 100 characters');
                             } else if (!values.name || !['Abhishekam', 'Beeksha'].includes(values.name)) {
@@ -104,55 +123,42 @@ const Schedule = ({navigation}) => {
                                 Alert.alert('Error', 'Day is required, other than the current day or past day');
                             } else if (new Date(values.Day).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
                                 Alert.alert('Error', 'You cannot select a date before the current date');
-                            }else if (!values.address || values.address.length < 2 || values.address.length > 100) {
+                            } else if (!values.address || values.address.length < 2 || values.address.length > 100) {
                                 Alert.alert('Error', 'Address must be between 2 and 100 characters');
                             } else {
-                                console.log(values);
-
                                 const dateParts = values.Day.split("-");
                                 const utcDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2], 12, 0, 0));                             
 
                                 const appointmentData = {
-                                    fullName: values.fullName, // the full name
-                                    name: values.name, // the selected value from the Picker
-                                    phoneNumber: Number(values.phoneNumber), // the phone number
-                                    Day: utcDate, // the selected date
-                                    day: values.Day,
-                                    address: values.address, // the address
-                                    userId: user.uid, // the user's ID
+                                    fullName: values.fullName,
+                                    name: values.name,
+                                    phoneNumber: Number(values.phoneNumber),
+                                    Day: utcDate,
+                                    address: values.address,
+                                    familyName: familyName, // Add family name to the data sent to Firestore
+                                    userId: user.uid,
                                 };
 
-                                
-
-                                // Check if the date or phone number is already used
                                 const dateQuery = query(
                                     collection(db, "appointments"),
-                                    where("Day", "==", utcDate),
+                                    where("Day", "==", utcDate)
                                 );
                                 const dateSnapshot = await getDocs(dateQuery);
                                 if (!dateSnapshot.empty) {
-                                    // If the date or phone number is already used, show an error message
-                                    console.error("An appointment with this date or phone number already exists.");
-                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
                                     Alert.alert('Error', 'An arrangement with this date already exists.');
                                     return;
                                 }
 
-                                // Check if the phone number is already used
                                 const phoneQuery = query(
                                     collection(db, "appointments"),
                                     where("phoneNumber", "==", appointmentData.phoneNumber)
                                 );
                                 const phoneSnapshot = await getDocs(phoneQuery);
                                 if (!phoneSnapshot.empty) {
-                                    // If the phone number is already used, show an error message
-                                    console.error("An arrangement with this phone number already exists.");
-                                    Alert.alert('Tip', 'If you want to reschedule, please delete the existing arrangement first in Bookings');
                                     Alert.alert('Error', 'An arrangement with this phone number already exists.');
                                     return;
                                 }
 
-                                // Check if the current user has already scheduled an appointment
                                 const userAppointmentQuery = query(
                                     collection(db, "appointments"),
                                     where("userId", "==", user.uid)
@@ -160,180 +166,176 @@ const Schedule = ({navigation}) => {
                                 const userAppointmentSnapshot = await getDocs(userAppointmentQuery);
 
                                 if (!userAppointmentSnapshot.empty) {
-                                    // If the user has already scheduled an appointment, delete it
                                     const docId = userAppointmentSnapshot.docs[0].id;
                                     await deleteDoc(doc(db, 'appointments', docId));
-                                    Alert.alert('NICE', 'Your previous arrangement has been deleted.');
+                                    Alert.alert('Tip', 'Your previous arrangement has been deleted.');
+                                }
+                                if (!familyName) {
+                                    Alert.alert('Error', 'No family selected. Please select a family before scheduling.');
+                                    return;
+                                }
+                        
+                                if (hasFamilyBooking) {
+                                    Alert.alert('Error', 'This family already has a booking.');
+                                    return;
                                 }
 
-                                // Save the appointment data in Firestore
                                 try {
                                     const docRef = await addDoc(collection(db, "appointments"), appointmentData);
-                                    console.log("Document written with ID: ", docRef.id);
+                                    Alert.alert('Success', 'Your appointment has been scheduled.');
+                                    navigation.navigate('Bookings');
                                 } catch (e) {
                                     console.error("Error adding document: ", e);
                                 }
-
-                                Alert.alert('NICE', 'SCHEDULED! Navigate to Bookings to view your arrangement.');
-                                navigation.navigate('Bookings');
-                                console.log(values);
                             }
                         }}
-                    >{({handleChange, handleBlur, handleSubmit, values}) => (<StyledFormArea>
-                        
+                    >
+                        {({ handleChange, handleBlur, handleSubmit, values }) => (
+                            <StyledFormArea>
+                                <MyTextInput
+                                    label="Full Name"
+                                    icon="person"
+                                    placeholder="Pawan Kalyan"
+                                    placeholderTextColor={darkLight}
+                                    onChangeText={handleChange('fullName')}
+                                    onBlur={handleBlur('fullName')}
+                                    value={values.fullName}
+                                />
 
-                        {/* {show && (
-                            <DateTimePickerModal
-                                isVisible={isDatePickerVisible}
-                                mode="date"
-                                date={date}
-                                onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
-                                onCancel={hideDatePicker}
-                            />
-                        )} */}
-                    
-                        <MyTextInput 
-                            label="Full Name"
-                            icon="person"
-                            placeholder="Pawan Kalyan"
-                            placeholderTextColor={darkLight}
-                            onChangeText={handleChange('fullName')}
-                            onBlur={handleBlur('fullName')}
-                            value={values.fullName}
-                        />
-                        
-                        <MyTextInput 
-                            label="Abhishekam or Beeksha"
-                            icon="home"
-                            placeholder="Abhishekam/Beeksha"
-                            placeholderTextColor={darkLight}
-                            onBlur={handleBlur('name')}
-                            value={name}
-                            onFocus={() => setPickerVisible(true)} // Show the Picker when the TextInput is focused
-                            
-                        />
+                                {/* Family Name (non-editable) */}
+                                <MyTextInput
+                                    label="Family Name"
+                                    icon="home"
+                                    placeholder="No family selected"
+                                    placeholderTextColor={darkLight}
+                                    value={familyName ? familyName : 'No family selected'}
+                                    editable={false}
+                                />
 
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={isPickerVisible}
-                            onRequestClose={() => {
-                                setPickerVisible(!isPickerVisible);
-                            }}
-                        >
-                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                <View style={{backgroundColor: 'white', padding: 20, borderRadius: 10}}>
-                                    <Picker
-                                        style={{width: 200}}
-                                        selectedValue={pickerValue} // Change this line
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            setPickerValue(itemValue); // Change this line
-                                            setName(itemValue);
-                                            handleChange('name')(itemValue);
-                                            setPickerVisible(true); // Hide the Picker when an item is selected
-                                        }}
-                                    >
-                                        <Picker.Item label="Select..." value="" />
-                                        <Picker.Item label="Abhishekam" value="Abhishekam" />
-                                        <Picker.Item label="Beeksha" value="Beeksha" />
-                                    </Picker>
+                                <MyTextInput
+                                    label="Abhishekam or Beeksha"
+                                    icon="home"
+                                    placeholder="Abhishekam/Beeksha"
+                                    placeholderTextColor={darkLight}
+                                    onBlur={handleBlur('name')}
+                                    value={name}
+                                    onFocus={() => setPickerVisible(true)}
+                                />
 
-                                    <Button
-                                        title="Close"
-                                        onPress={() => setPickerVisible(!isPickerVisible)}
-                                    />
-                                </View>
-                            </View>
-                        </Modal>
+                                <Modal
+                                    animationType="slide"
+                                    transparent={true}
+                                    visible={isPickerVisible}
+                                    onRequestClose={() => {
+                                        setPickerVisible(!isPickerVisible);
+                                    }}
+                                >
+                                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                                            <Picker
+                                                style={{ width: 200 }}
+                                                selectedValue={pickerValue}
+                                                onValueChange={(itemValue, itemIndex) => {
+                                                    setPickerValue(itemValue);
+                                                    setName(itemValue);
+                                                    handleChange('name')(itemValue);
+                                                    setPickerVisible(true);
+                                                }}
+                                            >
+                                                <Picker.Item label="Select..." value="" />
+                                                <Picker.Item label="Abhishekam" value="Abhishekam" />
+                                                <Picker.Item label="Beeksha" value="Beeksha" />
+                                            </Picker>
 
-                        <MyTextInput 
-                            label="Phone Number (without +1)"
-                            icon="device-mobile"
-                            placeholder="1234567890"
-                            placeholderTextColor={darkLight}
-                            keyboardType="numeric"
-                            onChangeText={(text) => {
-                                setPhoneNumber(text);
-                                handleChange('phoneNumber')(text);
-                            }}
-                            onBlur={handleBlur('phoneNumber')}
-                            value={phoneNumber}
-                        /> 
+                                            <Button title="Close" onPress={() => setPickerVisible(!isPickerVisible)} />
+                                        </View>
+                                    </View>
+                                </Modal>
 
-                        <DateTimePickerModal
-                            isVisible={isDatePickerVisible}
-                            mode="date"
-                            onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
-                            onCancel={hideDatePicker}
-                        />
+                                <MyTextInput
+                                    label="Phone Number (without +1)"
+                                    icon="device-mobile"
+                                    placeholder="1234567890"
+                                    placeholderTextColor={darkLight}
+                                    keyboardType="numeric"
+                                    onChangeText={(text) => {
+                                        setPhoneNumber(text);
+                                        handleChange('phoneNumber')(text);
+                                    }}
+                                    onBlur={handleBlur('phoneNumber')}
+                                    value={phoneNumber}
+                                />
 
-                        <MyTextInput 
-                            label="Selected Date"
-                            icon="calendar"
-                            placeholder="YYYY-MM-DD"
-                            placeholderTextColor={darkLight}
-                            value={date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
-                            editable={true}
-                            onFocus={showDatePicker} // Add this line
-                        />
+                                <DateTimePickerModal
+                                    isVisible={isDatePickerVisible}
+                                    mode="date"
+                                    onConfirm={(selectedDate) => handleConfirm(handleChange, selectedDate)}
+                                    onCancel={hideDatePicker}
+                                />
 
-                        {/* Address box */}
-                        <MyTextInput 
-                            label="Your Address"
-                            icon="note"
-                            placeholder="111 Drummer Rd"
-                            placeholderTextColor={darkLight}
-                            onChangeText={handleChange('address')}
-                            onBlur={handleBlur('address')}
-                            value={values.address}
-                        />
+                                <MyTextInput
+                                    label="Selected Date"
+                                    icon="calendar"
+                                    placeholder="YYYY-MM-DD"
+                                    placeholderTextColor={darkLight}
+                                    value={date ? `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}` : 'No date selected'}
+                                    editable={true}
+                                    onFocus={showDatePicker}
+                                />
 
-                        <StyledButton onPress={handleSubmit}>
-                            <ButtonText>
-                                Schedule
-                            </ButtonText>
-                        </StyledButton>
-                        <Line />
-                    </StyledFormArea>)}
+                                <MyTextInput
+                                    label="Your Address"
+                                    icon="note"
+                                    placeholder="111 Drummer Rd"
+                                    placeholderTextColor={darkLight}
+                                    onChangeText={handleChange('address')}
+                                    onBlur={handleBlur('address')}
+                                    value={values.address}
+                                />
+
+                                <StyledButton onPress={handleSubmit}>
+                                    <ButtonText>Schedule</ButtonText>
+                                </StyledButton>
+                                <Line />
+                            </StyledFormArea>
+                        )}
                     </Formik>
-
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-                    <Text></Text>
-
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
+                    <Text> </Text>
                 </InnerContainer>
             </StyledContainer>
         </KeyboardAvoidingWrapper>
     );
 };
 
-
 const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, isDate, showDatePicker, ...props }) => {
     return (
-      <TouchableOpacity activeOpacity={1} onPress={isDate ? showDatePicker : undefined} style={{ position: 'relative' }}>
-        <View>
-          <LeftIcon>
-            <Octicons name={icon} size={30} color={brand} />
-          </LeftIcon>
-          <StyledInputLabel>{label}</StyledInputLabel>
-          <StyledTextInput {...props} pointerEvents={isDate ? 'none' : 'auto'} onChangeText={props.onChangeText} />
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity activeOpacity={1} onPress={isDate ? showDatePicker : undefined} style={{ position: 'relative' }}>
+            <View>
+                <LeftIcon>
+                    <Octicons name={icon} size={30} color={brand} />
+                </LeftIcon>
+                <StyledInputLabel>{label}</StyledInputLabel>
+                <StyledTextInput {...props} pointerEvents={isDate ? 'none' : 'auto'} onChangeText={props.onChangeText} />
+            </View>
+        </TouchableOpacity>
     );
 };
 

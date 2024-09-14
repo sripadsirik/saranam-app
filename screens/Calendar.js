@@ -48,6 +48,7 @@ const Calendar = () => {
         return (
             <View style={{backgroundColor: 'white', padding: 20, marginRight: 10, marginTop: 17, zIndex: 1 }}>
                 <Text>Name: {item.fullName}</Text>
+                <Text>Family Name: {item.familyName}</Text>
                 <Text>Phone Number: {item.phoneNumber}</Text>
                 <Text>Pooja Type: {item.name}</Text>
                 <Text>Address: {item.address}</Text>

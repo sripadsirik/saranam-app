@@ -139,6 +139,22 @@ export const StyledButton = styled.TouchableOpacity`
     `}
 `;
 
+export const StyledButton1 = styled.TouchableOpacity`
+    padding: 15px;
+    background-color: ${primary};
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-vertical: 5px;
+    height: 60px;
+
+    ${(props) => props.google == true && `
+        background-color: ${red};
+        flex-direction: row;
+        justify-content: center;
+    `}
+`;
+
 export const ButtonText = styled.Text`
     color: ${primary};
     font-size: 16px;
