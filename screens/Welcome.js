@@ -412,7 +412,7 @@ const Welcome = ({ navigation }) => {
             Alert.alert("Error", "There was an error creating the family. Please try again.");
         }
     };
-    
+
     const handleJoinFamily = async () => {
         try {
             if (pickerValue) {
@@ -597,7 +597,7 @@ const Welcome = ({ navigation }) => {
                                     <Text style={{ color: 'red' }}>Delete Account</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={handleResetFamily} style={{ padding: 10 }}>
-                                    <Text style={{ color: 'black' }}>Reset Family</Text>
+                                    <Text style={{ color: 'black' }}>Leave Family</Text>
                                 </TouchableOpacity>
                                 {hasSelectedMathaOption && (
                                     <TouchableOpacity onPress={handleChangeMathaConfirmation} style={{ padding: 10 }}>
