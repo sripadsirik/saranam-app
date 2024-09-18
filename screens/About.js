@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StatusBar, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { 
     InnerContainer, 
     PageLogo, 
@@ -18,6 +18,11 @@ import {
 import { ItemBox } from '../components/styles';
 
 const About = () => {
+
+    const handleEmailPress = () => {
+        Linking.openURL('mailto:saranamyatrachicago@gmail.com');
+    };
+
     return (
         <ScrollView>
             <StyledContainer>
@@ -75,7 +80,7 @@ Lord Ayyappa, and Irumudi Puja for interested devotees.
 
                     <SubTitle> Our History </SubTitle>
                     <MsgBox style={msgBoxStyles.container}> 
-                    AyyappaSamaaj is a virtual organization that was formed by a group of active devotees
+                    Ayyappa Devotee Community is a virtual organization that was formed by a group of active devotees
 of Lord Ayyappa in the Greater Chicago area led by our Guruswamy Shri Kailash
 Talreja . We are proud to have hundreds of active members in the group. We also
 formed a volunteer specific sub group called Ayyappa SARANAM YATRA, Chicago
@@ -83,7 +88,7 @@ formed a volunteer specific sub group called Ayyappa SARANAM YATRA, Chicago
                     </MsgBox>
                     <MsgBox></MsgBox>
                     <MsgBox style={msgBoxStyles.container}> 
-                    Ayyappa Samaaj was founded with the goal of creating a
+                    Ayyappa Devotee Community was founded with the goal of creating a
 
 nimble, fast moving organization that serves the needs of Ayyappa devotees worldwide.
 When we look back at what SARANAM YATRA has been involved in over the years,
@@ -141,7 +146,21 @@ Lord Ayyappa afterwards
                     <SubTitle> We look forward to your participation in all of these events. Besides these events,
                     SARANAM YATRA also participates in other events for the community. “TATWAMASI" </SubTitle>
 
-                    <MsgBox style={msgBoxStyles.container}>Contact: {"\n"} saranamyatrachicago@gmail.com</MsgBox>
+                    <View style={[{ marginVertical: 10, alignItems: 'center' }, msgBoxStyles.container]}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, alignItems: 'center' }}> Contact Us </Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, alignItems: 'center' }}> Email: </Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('mailto:saranamyatrachicago@gmail.com')} style={{ marginBottom: 10}}>
+                            <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 16 }}>
+                                saranamyatrachicago@gmail.com
+                            </Text>
+                        </TouchableOpacity>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, alignItems: 'center' }}> Phone: </Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('tel:+14842243384')}>
+                            <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 16, marginTop: 10 }}>
+                                +1 484-224-3384
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <PageTitle> Thank You </PageTitle>
                     <Line style={{ marginTop: 200 }} />
