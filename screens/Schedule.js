@@ -145,7 +145,7 @@ const Schedule = ({ navigation }) => {
                                 );
                                 const dateSnapshot = await getDocs(dateQuery);
                                 if (!dateSnapshot.empty) {
-                                    Alert.alert('Error', 'An arrangement with this date already exists.');
+                                    Alert.alert('Error', 'A Pooja with this date already exists.');
                                     return;
                                 }
 
@@ -155,7 +155,7 @@ const Schedule = ({ navigation }) => {
                                 );
                                 const phoneSnapshot = await getDocs(phoneQuery);
                                 if (!phoneSnapshot.empty) {
-                                    Alert.alert('Error', 'An arrangement with this phone number already exists.');
+                                    Alert.alert('Error', 'A Pooja with this phone number already exists.');
                                     return;
                                 }
 
@@ -166,9 +166,30 @@ const Schedule = ({ navigation }) => {
                                 const userAppointmentSnapshot = await getDocs(userAppointmentQuery);
 
                                 if (!userAppointmentSnapshot.empty) {
-                                    const docId = userAppointmentSnapshot.docs[0].id;
-                                    await deleteDoc(doc(db, 'appointments', docId));
-                                    Alert.alert('Tip', 'Your previous arrangement has been deleted.');
+                                    Alert.alert(
+                                        'Confirm Deletion',
+                                        'This will delete you existent schedule. Are you sure you want to proceed?',
+                                        [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => console.log('Deletion cancelled'),
+                                                style: 'cancel',
+                                            },
+                                            {
+                                                text: 'Yes',
+                                                onPress: async () => {
+                                                    const docId = userAppointmentSnapshot.docs[0].id;
+                                                    await deleteDoc(doc(db, 'appointments', docId));
+                                                    Alert.alert('Success', 'Pooja deleted successfully!');
+                                                    
+                                                },
+                                            },
+                                        ],
+                                        { cancelable: false }
+                                    );
+                                    // const docId = userAppointmentSnapshot.docs[0].id;
+                                    // await deleteDoc(doc(db, 'appointments', docId));
+                                    // Alert.alert('Tip', 'Your previous schedule has been deleted.');
                                 }
                                 if (!familyName) {
                                     Alert.alert('Error', 'No family selected. Please select a family before scheduling.');
@@ -182,8 +203,14 @@ const Schedule = ({ navigation }) => {
 
                                 try {
                                     const docRef = await addDoc(collection(db, "appointments"), appointmentData);
-                                    Alert.alert('Success', 'Your appointment has been scheduled.');
+                                    Alert.alert('Success', 'Your pooja has been scheduled.');
+                                    // setName('');
+                                    // setPhoneNumber('');
+                                    // setDate(new Date());
+                                    // setAddress('');
                                     navigation.navigate('Bookings');
+                                    // setFullName('');
+                                    
                                 } catch (e) {
                                     console.error("Error adding document: ", e);
                                 }

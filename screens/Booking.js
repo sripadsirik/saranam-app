@@ -59,9 +59,29 @@ const Booking = ({navigation}) => {
     const handleDelete = async (index) => {
         const appointmentId = appointments[index].id;
         try {
-            await deleteDoc(doc(db, 'appointments', appointmentId));
-            Alert.alert('Success', 'Appointment deleted successfully!');
-            navigation.navigate('Schedule');
+            // await deleteDoc(doc(db, 'appointments', appointmentId));
+            // Alert.alert('Success', 'Pooja deleted successfully!');
+            // navigation.navigate('Schedule');
+            Alert.alert(
+                'Confirm Deletion',
+                'Are you sure you want to delete the appointment?',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Deletion cancelled'),
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Yes',
+                        onPress: async () => {
+                            await deleteDoc(doc(db, 'appointments', appointmentId));
+                            Alert.alert('Success', 'Pooja deleted successfully!');
+                            navigation.navigate('Schedule');
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
         } catch (error) {
             console.error("Error removing document: ", error);
             Alert.alert('Error', 'Error deleting appointment!');
