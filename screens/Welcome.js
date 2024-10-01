@@ -202,6 +202,8 @@ const Welcome = ({ navigation }) => {
     const handleSignOut = async () => {
         try {
             await signOut(auth);
+            console.log('User signed out');
+            Alert.alert('Logged out', 'User logged out successfully');
             navigation.dispatch(
                 CommonActions.reset({ index: 0, routes: [{ name: 'Login' }] })
             );

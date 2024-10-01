@@ -151,7 +151,7 @@ const Booking = ({navigation}) => {
                 <InnerContainer>
                     <PageTitle>My Pooja Time</PageTitle>
                     <Line />
-                    <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing appointment below. </MsgBox>
+                    <MsgBox> Only one booking is allowed. To schedule another (if you mis-scheduled it), please delete the existing pooja below. </MsgBox>
                     <Line />
                     <View style={styles.container}>
                         {appointments.map((appointment, index) => (
