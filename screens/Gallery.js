@@ -10,7 +10,14 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import { ref, uploadBytesResumable, getDownloadURL, listAll, getMetadata } from 'firebase/storage';
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  listAll,
+  getMetadata,
+  deleteObject,
+} from 'firebase/storage';
 import { storage } from '../firebase'; // Adjust the path as needed
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
@@ -48,6 +55,7 @@ const Gallery = () => {
         return {
           url: url,
           contentType: metadata.contentType,
+          fullPath: itemRef.fullPath, // Add fullPath to each media item
         };
       });
 
@@ -55,7 +63,10 @@ const Gallery = () => {
       setMediaFiles(mediaItems);
     } catch (error) {
       console.error('Error fetching media files:', error);
-      Alert.alert('Error', 'An error occurred while fetching media files. Please try again later.');
+      Alert.alert(
+        'Error',
+        'An error occurred while fetching media files. Please try again later.'
+      );
     } finally {
       setLoading(false);
     }
@@ -63,36 +74,41 @@ const Gallery = () => {
 
   const uploadMedia = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
+
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'Permission to access media library is required!');
+      Alert.alert(
+        'Permission required',
+        'Permission to access media library is required!'
+      );
       return;
     }
-  
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false, // Prevent automatic conversion
-      quality: undefined,   // Prevent automatic conversion
+      quality: undefined, // Prevent automatic conversion
     });
-  
+
     console.log('ImagePicker result:', result);
-  
+
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const asset = result.assets[0];
       console.log('Selected asset:', asset);
-  
+
       setUploading(true);
       let fileUri = asset.uri;
       let mimeType = asset.mimeType;
-      let fileExtension = asset.fileName ? asset.fileName.split('.').pop().toLowerCase() : '';
-  
+      let fileExtension = asset.fileName
+        ? asset.fileName.split('.').pop().toLowerCase()
+        : '';
+
       // Log the mimeType and fileExtension
       console.log('Asset mimeType:', mimeType);
       console.log('Asset fileExtension:', fileExtension);
-  
+
       const heifTypes = ['heic', 'heif'];
       const isHeif = heifTypes.includes(fileExtension);
-  
+
       if (asset.type.startsWith('image') && isHeif) {
         try {
           const manipulatedImage = await ImageManipulator.manipulateAsync(
@@ -111,9 +127,9 @@ const Gallery = () => {
           return;
         }
       }
-  
+
       const fileName = `image_${Date.now()}.${fileExtension}`;
-  
+
       // Fetch the file
       let blob;
       try {
@@ -125,15 +141,15 @@ const Gallery = () => {
         Alert.alert('Error', 'Failed to read the selected file.');
         return;
       }
-  
+
       const metadata = {
         contentType: mimeType,
       };
-  
+
       const storageRef = ref(storage, `gallery/${fileName}`);
-  
+
       const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
-  
+
       uploadTask.on(
         'state_changed',
         (snapshot) => {},
@@ -154,6 +170,37 @@ const Gallery = () => {
     }
   };
 
+  const handleLongPress = (item) => {
+    Alert.alert(
+      'Delete Media',
+      'Are you sure you want to delete this media?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteMedia(item),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const deleteMedia = async (item) => {
+    try {
+      const mediaRef = ref(storage, item.fullPath);
+      await deleteObject(mediaRef);
+      // Remove the item from the mediaFiles array
+      setMediaFiles((prevMediaFiles) =>
+        prevMediaFiles.filter((media) => media.url !== item.url)
+      );
+      Alert.alert('Deleted', 'Media has been deleted.');
+    } catch (error) {
+      console.error('Error deleting media:', error);
+      Alert.alert('Error', 'Failed to delete media.');
+    }
+  };
+
   const renderMediaItem = ({ item }) => {
     const isImage = item.contentType && item.contentType.startsWith('image/');
 
@@ -164,6 +211,7 @@ const Gallery = () => {
           setSelectedMedia(item);
           setModalVisible(true);
         }}
+        onLongPress={() => handleLongPress(item)} // Add onLongPress handler
       >
         {isImage ? (
           <Image source={{ uri: item.url }} style={styles.mediaImage} />
@@ -190,6 +238,9 @@ const Gallery = () => {
 
   return (
     <View style={styles.container}>
+      <Text></Text>
+      <Text></Text>
+      <Text></Text>
       <TouchableOpacity style={styles.uploadButton} onPress={uploadMedia}>
         <Text style={styles.uploadButtonText}>Upload Media</Text>
       </TouchableOpacity>
@@ -252,7 +303,6 @@ const Gallery = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
