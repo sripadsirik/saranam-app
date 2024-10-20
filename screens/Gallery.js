@@ -14,63 +14,44 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  listAll,
-  getMetadata,
   deleteObject,
 } from 'firebase/storage';
-import { storage } from '../firebase'; // Adjust the path as needed
+import { storage, db } from '../firebase'; // Adjust the path as needed
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import * as ImageManipulator from 'expo-image-manipulator'; // Import ImageManipulator
+import { collection, addDoc, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 
 const Gallery = () => {
   const [mediaFiles, setMediaFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   // State for full-screen modal
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(null);
 
+  // State for selection mode and selected items
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  // State for upload progress
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [totalFiles, setTotalFiles] = useState(0);
+
   useEffect(() => {
-    fetchMediaFiles();
-  }, []);
-
-  const fetchMediaFiles = async () => {
-    try {
-      const storageRef = ref(storage, 'gallery/');
-      const result = await listAll(storageRef);
-
-      if (result.items.length === 0) {
-        console.warn('No files found in the gallery folder.');
-        setMediaFiles([]);
-        setLoading(false);
-        return;
-      }
-
-      const mediaPromises = result.items.map(async (itemRef) => {
-        const url = await getDownloadURL(itemRef);
-        const metadata = await getMetadata(itemRef);
-
-        return {
-          url: url,
-          contentType: metadata.contentType,
-          fullPath: itemRef.fullPath, // Add fullPath to each media item
-        };
-      });
-
-      const mediaItems = await Promise.all(mediaPromises);
+    const unsubscribe = onSnapshot(collection(db, 'gallery'), (snapshot) => {
+      const mediaItems = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      // Sort mediaItems by timestamp descending if you want the latest first
+      mediaItems.sort((a, b) => b.timestamp - a.timestamp);
       setMediaFiles(mediaItems);
-    } catch (error) {
-      console.error('Error fetching media files:', error);
-      Alert.alert(
-        'Error',
-        'An error occurred while fetching media files. Please try again later.'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    });
+
+    // Clean up the listener on unmount
+    return () => unsubscribe();
+  }, []);
 
   const uploadMedia = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -87,131 +68,185 @@ const Gallery = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false, // Prevent automatic conversion
       quality: undefined, // Prevent automatic conversion
+      allowsMultipleSelection: true, // Enable multiple selection
+      selectionLimit: 13, // Limit to 20 files
     });
 
     console.log('ImagePicker result:', result);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      const asset = result.assets[0];
-      console.log('Selected asset:', asset);
-
       setUploading(true);
-      let fileUri = asset.uri;
-      let mimeType = asset.mimeType;
-      let fileExtension = asset.fileName
-        ? asset.fileName.split('.').pop().toLowerCase()
-        : '';
+      setTotalFiles(result.assets.length);
+      setUploadProgress(0);
 
-      // Log the mimeType and fileExtension
-      console.log('Asset mimeType:', mimeType);
-      console.log('Asset fileExtension:', fileExtension);
+      // Process each selected asset
+      const uploadPromises = result.assets.map(async (asset) => {
+        console.log('Selected asset:', asset);
 
-      const heifTypes = ['heic', 'heif'];
-      const isHeif = heifTypes.includes(fileExtension);
+        let fileUri = asset.uri;
+        let mimeType = asset.mimeType;
+        let fileExtension = asset.fileName
+          ? asset.fileName.split('.').pop().toLowerCase()
+          : '';
 
-      if (asset.type.startsWith('image') && isHeif) {
+        // Log the mimeType and fileExtension
+        console.log('Asset mimeType:', mimeType);
+        console.log('Asset fileExtension:', fileExtension);
+
+        const heifTypes = ['heic', 'heif'];
+        const isHeif = heifTypes.includes(fileExtension);
+
+        if (asset.type.startsWith('image') && isHeif) {
+          try {
+            const manipulatedImage = await ImageManipulator.manipulateAsync(
+              fileUri,
+              [],
+              { format: ImageManipulator.SaveFormat.JPEG }
+            );
+            fileUri = manipulatedImage.uri;
+            mimeType = 'image/jpeg';
+            fileExtension = 'jpg';
+            console.log('Converted HEIF image to JPEG:', manipulatedImage);
+          } catch (error) {
+            console.error('Error converting HEIF image:', error);
+            Alert.alert('Conversion failed', 'Failed to convert HEIF image to JPEG.');
+            return;
+          }
+        }
+
+        const fileName = `image_${Date.now()}_${Math.floor(
+          Math.random() * 10000
+        )}.${fileExtension}`;
+
+        // Fetch the file
+        let blob;
         try {
-          const manipulatedImage = await ImageManipulator.manipulateAsync(
-            fileUri,
-            [],
-            { format: ImageManipulator.SaveFormat.JPEG }
-          );
-          fileUri = manipulatedImage.uri;
-          mimeType = 'image/jpeg';
-          fileExtension = 'jpg';
-          console.log('Converted HEIF image to JPEG:', manipulatedImage);
+          const response = await fetch(fileUri);
+          blob = await response.blob();
         } catch (error) {
-          console.error('Error converting HEIF image:', error);
-          setUploading(false);
-          Alert.alert('Conversion failed', 'Failed to convert HEIF image to JPEG.');
+          console.error('Error fetching the file:', error);
+          Alert.alert('Error', 'Failed to read the selected file.');
           return;
         }
-      }
 
-      const fileName = `image_${Date.now()}.${fileExtension}`;
+        const metadata = {
+          contentType: mimeType,
+        };
 
-      // Fetch the file
-      let blob;
-      try {
-        const response = await fetch(fileUri);
-        blob = await response.blob();
-      } catch (error) {
-        console.error('Error fetching the file:', error);
-        setUploading(false);
-        Alert.alert('Error', 'Failed to read the selected file.');
-        return;
-      }
+        const storageRef = ref(storage, `gallery/${fileName}`);
 
-      const metadata = {
-        contentType: mimeType,
-      };
-
-      const storageRef = ref(storage, `gallery/${fileName}`);
-
-      const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {},
-        (error) => {
-          console.error('Upload error:', error);
-          setUploading(false);
-          Alert.alert('Upload failed', error.message);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setUploading(false);
-            fetchMediaFiles();
+        // Upload the file
+        return uploadBytesResumable(storageRef, blob, metadata)
+          .then((snapshot) => {
+            console.log('Uploaded:', fileName);
+            return getDownloadURL(snapshot.ref).then((downloadURL) => {
+              // Add metadata to Firestore
+              return addDoc(collection(db, 'gallery'), {
+                url: downloadURL,
+                contentType: mimeType,
+                fullPath: snapshot.ref.fullPath,
+                name: snapshot.ref.name,
+                timestamp: Date.now(),
+              });
+            });
+          })
+          .then(() => {
+            setUploadProgress((prev) => prev + 1);
+          })
+          .catch((error) => {
+            console.error('Upload error:', error);
+            Alert.alert('Upload failed', error.message);
           });
-        }
-      );
+      });
+
+      // Wait for all uploads to finish
+      Promise.all(uploadPromises)
+        .then(() => {
+          console.log('All uploads completed');
+        })
+        .finally(() => {
+          setUploading(false);
+        });
     } else {
       console.log('User cancelled image picker or no assets returned');
     }
   };
 
   const handleLongPress = (item) => {
+    if (selectionMode) {
+      handleSelectItem(item);
+    } else {
+      setSelectionMode(true);
+      setSelectedItems([item]);
+    }
+  };
+
+  const handleSelectItem = (item) => {
+    if (selectedItems.some((i) => i.id === item.id)) {
+      // Deselect item
+      setSelectedItems(selectedItems.filter((i) => i.id !== item.id));
+    } else {
+      // Select item
+      setSelectedItems([...selectedItems, item]);
+    }
+  };
+
+  const cancelSelectionMode = () => {
+    setSelectionMode(false);
+    setSelectedItems([]);
+  };
+
+  const deleteSelectedItems = async () => {
     Alert.alert(
       'Delete Media',
-      'Are you sure you want to delete this media?',
+      `Are you sure you want to delete ${selectedItems.length} item(s)?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => deleteMedia(item),
+          onPress: async () => {
+            try {
+              // Delete each selected item
+              const deletePromises = selectedItems.map(async (item) => {
+                const mediaRef = ref(storage, item.fullPath);
+                await deleteObject(mediaRef);
+                // Remove from Firestore
+                await deleteDoc(doc(db, 'gallery', item.id));
+              });
+
+              await Promise.all(deletePromises);
+
+              Alert.alert('Deleted', 'Selected media has been deleted.');
+            } catch (error) {
+              console.error('Error deleting media:', error);
+              Alert.alert('Error', 'Failed to delete media.');
+            } finally {
+              cancelSelectionMode();
+            }
+          },
         },
       ],
       { cancelable: true }
     );
   };
 
-  const deleteMedia = async (item) => {
-    try {
-      const mediaRef = ref(storage, item.fullPath);
-      await deleteObject(mediaRef);
-      // Remove the item from the mediaFiles array
-      setMediaFiles((prevMediaFiles) =>
-        prevMediaFiles.filter((media) => media.url !== item.url)
-      );
-      Alert.alert('Deleted', 'Media has been deleted.');
-    } catch (error) {
-      console.error('Error deleting media:', error);
-      Alert.alert('Error', 'Failed to delete media.');
-    }
-  };
-
   const renderMediaItem = ({ item }) => {
     const isImage = item.contentType && item.contentType.startsWith('image/');
+    const isSelected = selectedItems.some((i) => i.id === item.id);
 
     return (
       <TouchableOpacity
-        style={styles.mediaItem}
+        style={[styles.mediaItem, isSelected && styles.selectedItem]}
         onPress={() => {
-          setSelectedMedia(item);
-          setModalVisible(true);
+          if (selectionMode) {
+            handleSelectItem(item);
+          } else {
+            setSelectedMedia(item);
+            setModalVisible(true);
+          }
         }}
-        onLongPress={() => handleLongPress(item)} // Add onLongPress handler
+        onLongPress={() => handleLongPress(item)}
       >
         {isImage ? (
           <Image source={{ uri: item.url }} style={styles.mediaImage} />
@@ -223,29 +258,59 @@ const Gallery = () => {
             resizeMode="cover"
           />
         )}
+        {selectionMode && (
+          <View style={styles.checkmarkContainer}>
+            {isSelected ? (
+              <Text style={styles.checkmark}>✓</Text>
+            ) : (
+              <View style={styles.uncheckedCircle} />
+            )}
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading media files...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
+      {/* Header with buttons */}
       <Text></Text>
       <Text></Text>
       <Text></Text>
+      <View style={styles.header}>
+        {selectionMode ? (
+          <>
+            <TouchableOpacity onPress={cancelSelectionMode}>
+              <Text style={styles.headerButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>{selectedItems.length} Selected</Text>
+            <TouchableOpacity onPress={deleteSelectedItems}>
+              <Text style={[styles.headerButtonText, { color: 'red' }]}>Delete</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <View style={{ width: 60 }} />
+            <Text style={styles.headerTitle}>Gallery</Text>
+            <TouchableOpacity onPress={() => setSelectionMode(true)}>
+              <Text style={styles.headerButtonText}>Select</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+
       <TouchableOpacity style={styles.uploadButton} onPress={uploadMedia}>
         <Text style={styles.uploadButtonText}>Upload Media</Text>
       </TouchableOpacity>
 
-      {uploading && <ActivityIndicator size="large" color="#0000ff" />}
+      {uploading && (
+        <View style={styles.uploadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.uploadingText}>
+            Uploading files... {uploadProgress}/{totalFiles}
+          </Text>
+        </View>
+      )}
 
       {mediaFiles.length === 0 ? (
         <View style={styles.noMediaContainer}>
@@ -255,7 +320,7 @@ const Gallery = () => {
         <FlatList
           data={mediaFiles}
           renderItem={renderMediaItem}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id}
           numColumns={3}
           style={styles.mediaList}
         />
@@ -305,33 +370,56 @@ const Gallery = () => {
 };
 
 const styles = StyleSheet.create({
+  // ... (styles remain the same as your previous code)
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
   uploadButton: {
-    backgroundColor: '#1e90ff',
-    padding: 15,
-    margin: 15,
+    backgroundColor: '#000000',
+    padding: 10,
+    margin: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   uploadButtonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
   },
   mediaList: {
     flex: 1,
   },
   mediaItem: {
     flex: 1 / 3, // For 3 columns
-    margin: 2,
+    margin: 1,
     height: 120,
+    position: 'relative',
   },
   mediaImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 5,
+  },
+  selectedItem: {
+    opacity: 0.8,
+  },
+  checkmarkContainer: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderRadius: 12,
+    padding: 2,
+  },
+  checkmark: {
+    fontSize: 16,
+    color: 'green',
+  },
+  uncheckedCircle: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'gray',
   },
   noMediaContainer: {
     flex: 1,
@@ -346,6 +434,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // Uploading styles
+  uploadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  uploadingText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#000',
   },
   // Modal styles
   modalContainer: {
@@ -368,6 +468,26 @@ const styles = StyleSheet.create({
   fullScreenMedia: {
     width: '100%',
     height: '100%',
+  },
+  // Header styles
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  headerButtonText: {
+    fontSize: 16,
+    color: '#1e90ff',
+    width: 60,
+    textAlign: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
