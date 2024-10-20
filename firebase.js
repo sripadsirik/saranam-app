@@ -20,6 +20,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+
+
 const app = initializeApp(firebaseConfig);
 
 let auth;
@@ -29,6 +31,8 @@ async function initializeFirebaseAuth() {
     persistence: getReactNativePersistence(AsyncStorage)
   });
 }
+
+const storage = getStorage(app);
 
 async function fetchUrls() {
   const storage = getStorage();
@@ -188,4 +192,4 @@ initializeFirebaseAuth();
 
 const db = getFirestore(app);
 
-export { auth, db, fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls, fetchHanuUrls };
+export { auth, db, fetchUrls, fetchGaneshaUrls, fetchSaiUrls, fetchDeviUrls, fetchVishnuUrls, fetchShivaUrls, fetchMuruUrls, fetchHanuUrls, storage };

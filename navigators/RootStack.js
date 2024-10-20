@@ -15,6 +15,7 @@ import About from '../screens/About';
 import Calendar from '../screens/Calendar';
 import Bookings from '../screens/Booking';
 import Start from '../screens/Start';
+import Gallery from '../screens/Gallery';
 
 import Calendarstart from '../screens/Calendarstart';
 import Aboutstart from '../screens/Aboutstart';
@@ -56,6 +57,9 @@ const BottomTabNavigator = () => {
           else if (route.name === 'About Us') {
             iconName = 'information-circle-outline';
           }
+          else if (route.name === 'Gallery') {
+            iconName = 'image-outline';
+          }
 
           return <TabIcon focused={focused} name={iconName} />;
         },
@@ -73,9 +77,10 @@ const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen options={{headerShown: false}} name="Welcome" component={Welcome} />
+      <Tab.Screen options={{headerShown: false}} name="Gallery" component={Gallery} />
       <Tab.Screen options={{headerShown: false}} name="Schedule" component={Schedule} />
       <Tab.Screen options={{headerShown: false}} name="Bookings" component={Bookings} />
-      <Tab.Screen options={{headerShown: true}} name="Calendar" component={Calendar} />
+      <Tab.Screen options={{headerShown: false}} name="Calendar" component={Calendar} />
       <Tab.Screen options={{headerShown: false}} name="Songs" component={Scripts} />
       <Tab.Screen options={{headerShown: false}} name="About Us" component={About} />
     </Tab.Navigator>

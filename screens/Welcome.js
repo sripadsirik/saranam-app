@@ -621,7 +621,7 @@ const Welcome = ({ navigation }) => {
                         <Text> </Text>
                         <WelcomeContainer>
                             {/* <Button title={isPlaying ? "Mute Music" : "Unmute Music"} onPress={toggleSound} /> */}
-                            <PageTitle welcome={true}>Welcome Swamy</PageTitle>
+                            <PageTitle welcome={true}>Welcome</PageTitle>
                             <SubTitle welcome={true}>Swamy Saranam {userEmail1}</SubTitle>
                             <SubTitle welcome={true}>
                                 {familyName ? `You are part of the family: ${familyName}` : "You are not part of any family.\n Please answer questions below"}

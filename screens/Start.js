@@ -77,7 +77,7 @@ const Start = ({navigation}) => {
                     </TextLink>
                     <Text> </Text>
                     <Text> If you haven't signed up to be a swamy yet, please do so below: </Text>
-                    <StyledButton onPress={() => Linking.openURL('https://forms.gle/gwPA3cZa1P6yAtCq7')} >
+                    <StyledButton onPress={() => Linking.openURL('https://forms.gle/a7Y92Kem18sNLjvBA')} >
                         <ButtonText>
                             Signup to be a Swamy
                         </ButtonText>
