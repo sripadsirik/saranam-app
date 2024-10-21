@@ -28,9 +28,9 @@
     "expo-constants": "~16.0.1",
     "expo-dev-client": "~4.0.23",
     "expo-file-system": "~17.0.1",
+    "expo-image-manipulator": "~12.0.5",
     "expo-image-picker": "~15.0.7",
     "expo-linear-gradient": "~13.0.2",
-    "expo-permissions": "^14.4.0",
     "expo-sharing": "~12.0.1",
     "expo-status-bar": "~1.12.1",
     "expo-web-browser": "~13.0.3",
@@ -62,8 +62,7 @@
     "react-native-web": "~0.19.6",
     "rn-fetch-blob": "^0.12.0",
     "styled-components": "^6.1.6",
-    "yup": "^1.4.0",
-    "expo-image-manipulator": "~12.0.5"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
