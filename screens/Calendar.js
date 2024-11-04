@@ -6,23 +6,25 @@ import { db } from '../firebase';
 
 const Calendar = () => {
     const [items, setItems] = useState({});
+    const [filteredItems, setFilteredItems] = useState({});
+    const [selectedDate, setSelectedDate] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             const query = collection(db, 'appointments');
             const unsubscribe = onSnapshot(query, async (querySnapshot) => {
-                let data = {}; // Clear out the data object
+                let data = {};
                 const currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
+                currentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 for accurate comparison
 
                 for (let i = 0; i < querySnapshot.docs.length; i++) {
                     const doc = querySnapshot.docs[i];
                     const appointmentData = doc.data();
                     const appointmentDate = new Date(appointmentData.Day.seconds * 1000);
-                    appointmentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
+                    appointmentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 for accurate comparison
 
                     if (appointmentDate < currentDate) {
-                        // If the appointment date is before the current date, delete the document
+                        // If the appointment date is before today, delete the document
                         await deleteDoc(doc.ref);
                     } else {
                         const date = appointmentDate.toISOString().split('T')[0];
@@ -35,7 +37,6 @@ const Calendar = () => {
                 setItems(data);
             });
 
-            // Clean up the listener when the component unmounts
             return () => unsubscribe();
         };
         fetchData();
@@ -62,15 +63,43 @@ const Calendar = () => {
         );
     };
 
+    // Filter only the selected date items
+    const handleDayPress = (day) => {
+        const dateString = day.dateString;
+        setSelectedDate(dateString);
+
+        if (items[dateString]) {
+            // Only keep the items for the selected date
+            setFilteredItems({ [dateString]: items[dateString] });
+        } else {
+            // If no appointments for the selected date, clear out the filteredItems
+            setFilteredItems({});
+        }
+    };
+
+    // Custom header for showing month below the day
+    const renderDayHeader = (date) => {
+        if (!date) return null;
+        const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
+        const day = new Date(date).getDate();
+        const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
+        return (
+            <View style={styles.dateHeader}>
+                <Text style={styles.dayText}>{`${day} ${dayName}`}</Text>
+                <Text style={styles.monthText}>{month}</Text>
+            </View>
+        );
+    };
+
     return (
         <View style={{ flex: 1 }}>
-            <Text> </Text>
-            <Text> </Text>
-            <Text> </Text>
             <Agenda
-                items={items}
+                items={filteredItems}  // Pass the strictly filtered items
                 renderItem={renderItem}
                 renderEmptyData={renderEmptyData}
+                onDayPress={handleDayPress}
+                selected={selectedDate}
+                renderDay={(date) => renderDayHeader(date)} // Custom day header
             />
         </View>
     );
@@ -92,6 +121,18 @@ const styles = StyleSheet.create({
     noAppointmentsText: {
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    dateHeader: {
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    dayText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    monthText: {
+        fontSize: 14,
+        color: 'gray',
     },
 });
 
