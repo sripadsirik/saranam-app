@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/icon.jpeg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ssiri5.saranamapp",
+      "package": "com.ssiri5.saranamappandroid",
       "versionCode": 6
     },
     "web": {
@@ -34,6 +34,12 @@
       "eas": {
         "projectId": "874d770f-82f6-40eb-9174-439fc00e8837"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/874d770f-82f6-40eb-9174-439fc00e8837"
     }
   }
 }

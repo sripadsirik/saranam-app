@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Animated, Easing } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import { collection, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const Calendar = () => {
+const Calendarstart = ({ navigation }) => {
     const [items, setItems] = useState({});
-    const [filteredItems, setFilteredItems] = useState({});
-    const [selectedDate, setSelectedDate] = useState(null);
+    const colorAnimation = useState(new Animated.Value(0))[0];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -15,36 +14,78 @@ const Calendar = () => {
             const unsubscribe = onSnapshot(query, async (querySnapshot) => {
                 let data = {};
                 const currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 for accurate comparison
-
+                currentDate.setHours(0, 0, 0, 0);
                 for (let i = 0; i < querySnapshot.docs.length; i++) {
                     const doc = querySnapshot.docs[i];
                     const appointmentData = doc.data();
                     const appointmentDate = new Date(appointmentData.Day.seconds * 1000);
-                    appointmentDate.setHours(0, 0, 0, 0); // Set time to 00:00:00 for accurate comparison
-
+                    appointmentDate.setHours(0, 0, 0, 0);
                     if (appointmentDate < currentDate) {
-                        // If the appointment date is before today, delete the document
                         await deleteDoc(doc.ref);
                     } else {
                         const date = appointmentDate.toISOString().split('T')[0];
                         if (!data[date]) {
                             data[date] = [];
                         }
-                        data[date].push(appointmentData);
+                        data[date].push({
+                            ...appointmentData,
+                            formattedDate: new Intl.DateTimeFormat('en-US', {
+                                weekday: 'long',
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(appointmentDate)
+                        });
                     }
                 }
                 setItems(data);
             });
-
             return () => unsubscribe();
         };
         fetchData();
     }, []);
 
+    useEffect(() => {
+        colorAnimation.setValue(0);
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(colorAnimation, {
+                    toValue: 1,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(colorAnimation, {
+                    toValue: 2,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(colorAnimation, {
+                    toValue: 3,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver: false,
+                }),
+                Animated.timing(colorAnimation, {
+                    toValue: 0,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver: false,
+                }),
+            ])
+        ).start();
+    }, [colorAnimation]);
+
+    const interpolatedColor = colorAnimation.interpolate({
+        inputRange: [0, 1, 2, 3],
+        outputRange: ['purple', 'gold', 'blue', 'red'],
+    });
+
     const renderItem = (item) => {
         return (
             <View style={styles.item}>
+                <Text style={styles.dateText}>{item.formattedDate}</Text>
                 <Text>Name: {item.fullName}</Text>
                 <Text>Family Name: {item.familyName}</Text>
                 <Text>Phone Number: {item.phoneNumber}</Text>
@@ -54,7 +95,6 @@ const Calendar = () => {
         );
     };
 
-    // Custom view when there are no appointments
     const renderEmptyData = () => {
         return (
             <View style={styles.emptyData}>
@@ -63,54 +103,45 @@ const Calendar = () => {
         );
     };
 
-    // Filter only the selected date items
-    const handleDayPress = (day) => {
-        const dateString = day.dateString;
-        setSelectedDate(dateString);
-
-        if (items[dateString]) {
-            // Only keep the items for the selected date
-            setFilteredItems({ [dateString]: items[dateString] });
-        } else {
-            // If no appointments for the selected date, clear out the filteredItems
-            setFilteredItems({});
-        }
-    };
-
-    // Custom header for showing month below the day
-    const renderDayHeader = (date) => {
-        if (!date) return null;
-        const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'short' });
-        const day = new Date(date).getDate();
-        const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
-        return (
-            <View style={styles.dateHeader}>
-                <Text style={styles.dayText}>{`${day} ${dayName}`}</Text>
-                <Text style={styles.monthText}>{month}</Text>
-            </View>
-        );
-    };
-
     return (
         <View style={{ flex: 1 }}>
+            <Animated.View style={[styles.animatedHeader, { backgroundColor: interpolatedColor }]}>
+                <Text> </Text>
+                <Text> </Text>
+                <Text> </Text>
+                <Text style={styles.animatedHeaderText}>Weekly Agenda</Text>
+            </Animated.View>
             <Agenda
-                items={filteredItems}  // Pass the strictly filtered items
+                items={items}
                 renderItem={renderItem}
                 renderEmptyData={renderEmptyData}
-                onDayPress={handleDayPress}
-                selected={selectedDate}
-                renderDay={(date) => renderDayHeader(date)} // Custom day header
             />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    animatedHeader: {
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    animatedHeaderText: {
+        fontSize: 18,
+        color: 'white',
+        fontWeight: 'bold',
+    },
     item: {
         backgroundColor: 'white',
         padding: 20,
         marginRight: 10,
         marginTop: 17,
+    },
+    dateText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 5,
     },
     emptyData: {
         flex: 1,
@@ -122,18 +153,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    dateHeader: {
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    dayText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    monthText: {
-        fontSize: 14,
-        color: 'gray',
+    buttonContainer: {
+        marginTop: 20,
+        paddingHorizontal: 20,
     },
 });
 
-export default Calendar;
+export default Calendarstart;

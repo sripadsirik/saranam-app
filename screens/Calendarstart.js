@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Agenda } from 'react-native-calendars';
@@ -9,43 +6,62 @@ import { db } from '../firebase';
 
 const Calendarstart = ({ navigation }) => {
     const [items, setItems] = useState({});
+    const [currentWeek, setCurrentWeek] = useState({});
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (startOfWeek, endOfWeek) => {
             const query = collection(db, 'appointments');
             const unsubscribe = onSnapshot(query, async (querySnapshot) => {
-                let data = {}; // Clear out the data object
-                const currentDate = new Date();
-                currentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
-
+                let data = {};
                 for (let i = 0; i < querySnapshot.docs.length; i++) {
                     const doc = querySnapshot.docs[i];
                     const appointmentData = doc.data();
                     const appointmentDate = new Date(appointmentData.Day.seconds * 1000);
-                    appointmentDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00 for accurate comparison
-
-                    if (appointmentDate < currentDate) {
-                        // If the appointment date is before the current date, delete the document
+                    appointmentDate.setHours(0, 0, 0, 0);
+                    if (appointmentDate < new Date()) {
                         await deleteDoc(doc.ref);
-                    } else {
+                    } else if (appointmentDate >= startOfWeek && appointmentDate <= endOfWeek) {
                         const date = appointmentDate.toISOString().split('T')[0];
                         if (!data[date]) {
                             data[date] = [];
                         }
-                        data[date].push(appointmentData);
+                        data[date].push({
+                            ...appointmentData,
+                            formattedDate: new Intl.DateTimeFormat('en-US', {
+                                weekday: 'long',
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }).format(appointmentDate)
+                        });
                     }
                 }
                 setItems(data);
             });
-
             return () => unsubscribe();
         };
-        fetchData();
+
+        const today = new Date();
+        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+        const endOfWeek = new Date(today.setDate(startOfWeek.getDate() + 6));
+        setCurrentWeek({ startOfWeek, endOfWeek });
+        fetchData(startOfWeek, endOfWeek);
     }, []);
+
+    const handleDayChange = (day) => {
+        const selectedDate = new Date(day.timestamp);
+        const startOfWeek = new Date(selectedDate.setDate(selectedDate.getDate() - selectedDate.getDay()));
+        const endOfWeek = new Date(selectedDate.setDate(startOfWeek.getDate() + 6));
+        if (startOfWeek.getTime() !== currentWeek.startOfWeek.getTime()) {
+            setCurrentWeek({ startOfWeek, endOfWeek });
+            fetchData(startOfWeek, endOfWeek);
+        }
+    };
 
     const renderItem = (item) => {
         return (
             <View style={styles.item}>
+                <Text style={styles.dateText}>{item.formattedDate}</Text>
                 <Text>Name: {item.fullName}</Text>
                 <Text>Family Name: {item.familyName}</Text>
                 <Text>Phone Number: {item.phoneNumber}</Text>
@@ -55,7 +71,6 @@ const Calendarstart = ({ navigation }) => {
         );
     };
 
-    // Custom view when there are no appointments
     const renderEmptyData = () => {
         return (
             <View style={styles.emptyData}>
@@ -75,6 +90,7 @@ const Calendarstart = ({ navigation }) => {
                 items={items}
                 renderItem={renderItem}
                 renderEmptyData={renderEmptyData}
+                onDayChange={handleDayChange}
             />
         </View>
     );
@@ -86,6 +102,12 @@ const styles = StyleSheet.create({
         padding: 20,
         marginRight: 10,
         marginTop: 17,
+    },
+    dateText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 5,
     },
     emptyData: {
         flex: 1,
